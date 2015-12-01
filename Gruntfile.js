@@ -3,7 +3,7 @@
 module.exports = function(grunt) {
 	// URI paths for our tasks to use.
 	grunt.uri = './';
-	grunt.uriStatic = grunt.uri + 'static/';
+	grunt.uriStatic = grunt.uri + 'web/';
 	grunt.uriDist = grunt.uriStatic + 'dist/';
 	grunt.uriSrc = grunt.uriStatic + 'src/';
 	grunt.uriTask = grunt.uri + 'script/grunt/';
@@ -25,11 +25,14 @@ module.exports = function(grunt) {
 	tasks = require(grunt.uriTask + 'css-minify.js')(grunt, tasks);
 	tasks = require(grunt.uriTask + 'html-minify.js')(grunt, tasks);
 	tasks = require(grunt.uriTask + 'js-minify.js')(grunt, tasks);
-
+	tasks = require(grunt.uriTask + 'start-server.js')(grunt,tasks);
+	console.log(tasks);
 	// Register The Tasks
 	grunt.registerTask('lint', ['csslint', 'htmllint', 'jshint']);
 	grunt.registerTask('minify', ['cssmin', 'htmlmin', 'uglify']);
 	grunt.registerTask('default', ['lint', 'concat', 'minify']);
+	grunt.registerTask('start-server',['connect'])
+
 
 	// Initialize The Grunt Configuration
 	grunt.initConfig(tasks);
