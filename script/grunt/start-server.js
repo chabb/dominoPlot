@@ -11,8 +11,8 @@ module.exports = function(grunt, tasks) {
          port: 8001,
          protocol: 'http',
          hostname: '*',
-         base: './web/dist',
-         keepalive: true,
+         base: './web/',
+         keepalive: false, // watch task is there
          open: true
        }
      }
