@@ -1,1 +1,4 @@
-To start developping, clone the repo and run grunt connect
+To start developping, clone the repo and run grunt start-dev on your machine
+
+
+
