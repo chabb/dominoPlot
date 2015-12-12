@@ -2,7 +2,7 @@
 
 ## Introduction
 
-A visulaisation to explore common elements of sets
+A visualisation to explore common elements of sets
 
 ## Contribute
 
