@@ -30,27 +30,50 @@ module.exports = function(grunt) {
 	tasks = require(grunt.uriTask + 'html-build.js')(grunt,tasks);
 
 	grunt.loadNpmTasks('grunt-contrib-watch');
+
 	// config watch, rebuild html file if changed
 	tasks.watch = {
-  	index: {
-    	files: [grunt.uriSrc+'/index.tpl.html'],
-    	tasks: ['htmlbuild:dev'],
-    	options: {
+		index: {
+			files: [grunt.uriSrc+'/index.tpl.html'],
+			tasks: ['htmlbuild:dev','prettify:dev'],
+			options: {
       	event: ['changed'] //all | deleted | changed | added
-    	},
-  	},
+      },
+    },
+  }
+
+  grunt.loadNpmTasks('grunt-prettify')
+  tasks.prettify = {
+  	dev : {
+  		options :{
+  			"indent": 2,
+  			"indent_char": " ",
+  			"indent_scripts": "normal",
+  			"wrap_line_length": 0,
+  			"brace_style": "collapse",
+  			"preserve_newlines": true,
+  			"max_preserve_newlines": 1,
+  			"unformatted": [
+  			"a",
+  			"code",
+  			"pre"
+  			]
+  		},
+  		html : {files: {}}
+  	}
 	}
 
-
+  tasks.prettify.dev.html.files[ grunt.uriStatic+'index.html'] = [grunt.uriStatic+'index.html'];
 
 	// Register The Tasks
 	grunt.registerTask('lint', ['csslint', 'htmllint', 'jshint']);
 	grunt.registerTask('minify', ['cssmin', 'htmlmin', 'uglify']);
 	grunt.registerTask('default', ['lint', 'concat', 'minify']);
-	grunt.registerTask('start-server',['connect'])
-	grunt.registerTask('start-dev',['htmlbuild:dev','start-server','watch:index'])
+	grunt.registerTask('start-server',['connect']);
+	grunt.registerTask('start-dev',['htmlbuild:dev','prettify:dev','start-server','watch:index']);
+
 	grunt.event.on('watch', function(action, filepath, target) {
-  	grunt.log.writeln(target + ': ' + filepath + ' has ' + action);
+		grunt.log.writeln(target + ': ' + filepath + ' has ' + action);
 	});
 
 	// Initialize The Grunt Configuration

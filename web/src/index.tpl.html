@@ -1,5 +1,3 @@
-BASE
-
 <html>
 <head>
     <title>grunt-html-build - Test Page</title>
@@ -7,19 +5,25 @@ BASE
     <!-- /build -->
     <!-- build:script libs  -->
     <!-- /build -->
-      <script type="text/javascript" src='https://code.jquery.com/jquery-2.1.4.min.js' /
-      >
-</head>
-<body id="landing-page">
-    NEW STUFF
+      <script type="text/javascript" src='https://code.jquery.com/jquery-2.1.4.min.js'></script>
     <!-- build:script bundle -->
     <!-- /build -->
-    <!-- build:process -->
-    <script type="text/javascript">
-        var DP = {};
-        DP.version = "<%= version %>";
-        DP.title = "<%= title %>";
-    </script>
-    <!-- /build -->
+
+</head>
+<body id="landing-page">
+  <h1>HEADER</h1>
+  TBD
+  <h1>MAIN TEST</h1>
+  TBD
+  <h1>FOOTER</h1>
+  TB
+
+  <!-- build:process -->
+  <script type="text/javascript">
+      var DP = {};
+      DP.version = "<%= version %>";
+      DP.title = "<%= title %>";
+  </script>
+  <!-- /build -->
 </body>
 </html>
