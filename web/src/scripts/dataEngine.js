@@ -8,7 +8,7 @@ d3.computeIntersections = function(maps,originalMapping)
     dominoMapping[k] = _i++;
     for(var i=0;i<v.content.length;i++)
         list.push({set:k,element:v.content[i]});
-    }),
+    })
 
   // create each intersections
   var limit = Math.pow(2,_i-1)
@@ -36,7 +36,7 @@ d3.computeIntersections = function(maps,originalMapping)
         distinctElements : elements,
         numberOfSets : numberOfSets,
         dominoMapping : dominoMapping,
-        currentMapping : currentMapping
+        currentMapping : originalMapping ? originalMapping : dominoMapping,
         numberOfDominos : limit
     }
 
