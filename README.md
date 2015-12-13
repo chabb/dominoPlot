@@ -8,7 +8,20 @@ A visualisation to explore common elements of sets
 
 Contributions are welcome
 
-To start developping, clone the repo and run grunt start-dev on your machine
+To start developping, install node and grunt on your machine, and clone the repo.
+
+Install the dependencies
+
+```
+npm install
+```
+
+Run the start-dev grunt task
+```
+grunt start-dev
+```
+
+This will start a browser and recompiles the files each time you modify the source code
 
 ## Authors
 
