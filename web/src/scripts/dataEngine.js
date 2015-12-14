@@ -4,22 +4,20 @@ d3.computeIntersections = function(maps,originalMapping)
   var list = [], dominoMapping = {}, _i = 1, intersections = {}, elements = 0,
     numberOfSets = maps.keys().length;
 
-  maps.forEach(function(k,v){
-    dominoMapping[k] = _i++;
-    for(var i=0;i<v.content.length;i++)
-        list.push({set:k,element:v.content[i]});
-    })
-
-  // create each intersections
-  var limit = Math.pow(2,_i-1)
-  for (var t=0;t<limit;t++) {
+    maps.forEach(function(k,v){
+        dominoMapping[k] = _i++;
+        for(var i=0;i<v.content.length;i++)
+            list.push({set:k,element:v.content[i]});
+    });
+    // create each intersections
+    var limit = Math.pow(2,_i-1)
+    for (var t=0;t<limit;t++) {
         intersections[t+''] = {
             elements:[],
             dominoRepresentation : computeDominoRepresentation(t),
             id:t
         };
     }
-
     var listA = d3.nest()
         .key(function(d) { return d.element })
         .map(list);
@@ -31,13 +29,31 @@ d3.computeIntersections = function(maps,originalMapping)
         var setId = computeIntersectionID(arrayOfSets);
         intersections[setId+''].elements.push(keys[i]);
     }
+
+    var invertedMapping = computeInvertedDictionnary(dominoMapping);
+    var originalInvertedMapping = computeInvertedDictionnary(originalMapping ? originalMapping : dominoMapping);
+
+
     return {
         intersections : intersections,
         distinctElements : elements,
         numberOfSets : numberOfSets,
-        dominoMapping : dominoMapping,
-        currentMapping : originalMapping ? originalMapping : dominoMapping,
+        currentMapping : dominoMapping,
+        currentInvertedMapping : invertedMapping,
+        originalMapping : originalMapping ? originalMapping : dominoMapping,
+        originalInvertedMapping : originalInvertedMapping,
         numberOfDominos : limit
+    }
+
+    function computeInvertedDictionnary(map) {
+        var invertedMap = {};
+        var mapKeys = Object.keys(map);
+        var invertedResult = {};
+        for (var i=0;i<mapKeys.length;i++) {
+            var key = mapKeys[i], value =  map[mapKeys[i]];
+            invertedMap[value] = key;
+        }
+        return invertedMap;
     }
 
     function computeIntersectionID(array) {
