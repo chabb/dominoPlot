@@ -27,26 +27,43 @@ var contents = d3.map([
 console.log('start computing');
 var  result = d3.computeIntersections(contents);
 console.log(result);
-d3.select('#main')
-    .datum(result)
-    .call(chart);
 
 
+
+// selection.call(function[, arguments…]) Invoke the function ONCE, with the provided arguments
+//The this context of the called function is also the current selection. This is slightly redundant with the first argument,
+//which we might fix in the future.
+//If you use an object's method in selection.call and need this to point to that object
+//you create a function bound to the object before calling.
+
+
+
+console.log(d3.select('#main'));
+
+
+$(document).ready(function(){
+   d3.select('#main')
+    .datum([result])
+    .call(chart.main);
+})
 
 // you have a data-bound element
 /// END OF MAIN FILE
-
-
-
-
 function dominoPlot(options) {
     // setup variable
-    var chart = {};
 
+    var chart = {};
+    margin = options.margin;
+    width = options.width;
+    height = options.height;
+    barWidth = options.barWidth;
+    barColor = options.barColor;
 
     // this fonction init the groups and the basic element
     var svgInit = function(selection) {
+        console.log('Defining groups',selection);
         selection.each(function(data) {
+            console.log('SVG INIT',selection);
             var svg = d3.select(this);
             // create the main container
             svg.append('g')
@@ -105,6 +122,18 @@ function dominoPlot(options) {
         if (!argument.length) { return width; }
         barWidth = width;
     }
+
+    chart.main = function(selection) {
+        console.log('start',selection.data());
+        selection.style(
+            {
+                'width'  : chart.width(),
+                'height' : chart.height()
+            }
+        );
+        svgInit(selection);
+    }
+
     return chart;
 }
 
