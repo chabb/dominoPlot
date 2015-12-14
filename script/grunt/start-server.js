@@ -13,6 +13,7 @@ module.exports = function(grunt, tasks) {
          hostname: '*',
          base: './web/',
          keepalive: false, // watch task is there
+         livereload: true,
          open: true
        }
      }
