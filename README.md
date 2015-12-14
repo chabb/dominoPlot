@@ -23,7 +23,7 @@ grunt start-dev
 
 This will start a browser and recompiles the files each time you modify the source code
 
-####ALS PLEASE DO NOT COMMIT INDEX.HTML, AS IT'S A GENERATED FILE, ONLY COMMIT THE TEMPLATE FILE
+####ALS PLEASE DO NOT COMMIT INDEX.HTML, AS IT'S A GENERATED FILE, ONLY COMMIT THE TEMPLATE FILE ( = index.tpl.html )
 
 
 ## Authors
