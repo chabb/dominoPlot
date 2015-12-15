@@ -11,3 +11,8 @@ dominos {
   stroke: #000;
   shape-rendering: crispEdges;
 }
+circle {
+    fill : none;
+    stroke: #555555;
+    stroke-width: 2px;
+}

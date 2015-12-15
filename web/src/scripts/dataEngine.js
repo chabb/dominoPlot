@@ -36,6 +36,7 @@ d3.computeIntersections = function(maps,originalMapping)
 
     return {
         intersections : intersections,
+        intersectionsArray: d3.values(intersections),
         distinctElements : elements,
         numberOfSets : numberOfSets,
         currentMapping : dominoMapping,
@@ -76,3 +77,36 @@ d3.computeIntersections = function(maps,originalMapping)
         return domino;
     }
 }
+
+function reprojectArray(datum, context) {
+
+    var baseArray = datum.dominoRepresentation;
+    var newArray = [];
+    var baseMAPPING = context.originalMapping;
+    var invertedResult = context.currentInvertedMapping;
+     console.log('working on',datum,invertedResult,context);
+  // comme on itere sur le tableau, chaque element correspond a un ensemble
+  // ca devrait marcher car l'id est l'id d'une intersection donnée et ne change pas
+  // MAIS l'element de l'intersection change
+
+  // le mieux c'est de garder cette id, ca garde l'idee de "RAJOUT", et quand on rajoute un set
+  // celui-ci vient se mettre automatiquement a la fing
+
+
+  for (var i=0;i<baseArray.length;i++) {
+    //var mappedSet= invertedBaseMAPPING[i+1];
+    //var mappedIndex = result.dominoMapping[mappedSet]-1;
+    var mappedSet = invertedResult[i+1];
+    var mappedIndex =  baseMAPPING[mappedSet]-1;
+    console.log('CHECKING CIRCLE FOR',mappedSet,mappedIndex);
+    newArray.push ( {
+      baseId: datum.id,
+      hasCircle: baseArray[mappedIndex],
+      set: mappedSet,
+      compoundId: datum.id+invertedResult[i+1]
+    })
+  }
+   return newArray
+}
+
+

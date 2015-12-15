@@ -9,7 +9,7 @@ var options = {
     },
     width : 1000,
     height: 800,
-    barWidth: 30,
+    barWidth: 40,
     barPadding: 10,
     barColor : '#111111',
     circeColor : '#123456'
@@ -27,11 +27,17 @@ var contents = d3.map([
 
 var  result = d3.computeIntersections(contents);
 
+
+
+
 // selection.call(function[, arguments…]) Invoke the function ONCE, with the provided arguments
 //The this context of the called function is also the current selection. This is slightly redundant with the first argument,
 //which we might fix in the future.
 //If you use an object's method in selection.call and need this to point to that object
 //you create a function bound to the object before calling.
+
+//APPEND returns a selection with the added ELEMENT !!
+
 
 $(document).ready(function(){
    d3.select('#main')
@@ -97,10 +103,11 @@ function dominoPlot(options) {
 
         var xDomain = d3.keys(data[0].intersections);
         var setsName = d3.keys(data[0].currentMapping);
-        var yExtent = d3.extent(data[0].intersections,function(d) { return d.elements.length; })
+        var yExtent = d3.extent( data[0].intersectionsArray,function(d) { return d.elements.length; })
         var totalWidth = xDomain.length * barWidth + (xDomain.length - 1) * barPadding;
-        console.log('THE TOTAL WIDTH',totalWidth);
+
         var barHeight = 480;
+
 
 
         // x scale for bars
@@ -112,6 +119,8 @@ function dominoPlot(options) {
         var yDomino = d3.scale.ordinal()
             .rangeRoundBands([0, x.rangeBand() * setsName.length], .0,0)
             .domain(setsName); // a bit dirty coz you access the main data
+
+
 
         // y scale for bars
         var y = d3.scale.linear()
@@ -140,6 +149,32 @@ function dominoPlot(options) {
 
         svg.select('.yaxis.axis').transition().duration(400).call(yAxis);
         svg.select('.yaxis.domino.axis').transition().duration(400).call(yAxisDomino);
+
+
+        var enter = svg
+        .append("g")
+        .attr("class","domino-axis")
+        .attr("transform","translate("+0+","+(margin.top + 500)+")")
+        .selectAll("g.dominos")
+        .data(data[0].intersectionsArray,function(d){ console.log('data key',d); return d.id})
+        .enter();
+        var center = (barWidth) / 2;
+        var r = center / 1.5
+        var dominosChart = {};
+        var dominos = enter.append("g")
+          .attr("class", "dominos")
+          .attr("transform", function(d,i){ console.log('data',d); return "translate("+(barWidth * i )+",0)" });
+
+
+        dominos.selectAll("circle").data(function(d){return reprojectArray(d,data[0])},function(d,i,j){ return d.compoundId; })
+          .enter()
+          .append("circle")
+          .attr("cx",function(d,i){ return center})
+          .attr("cy",function(d,i){ console.log(d,(result.currentMapping[d.set]));return center + (x.rangeBand())* (result.currentMapping[d.set]-1)} )
+          .attr("r", function(d) {  return r })
+          .attr("visibility",function(d,i) {
+            return d.hasCircle ? "visible" : "hidden";
+          })
 
 
     }
