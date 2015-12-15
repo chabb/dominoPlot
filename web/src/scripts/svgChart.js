@@ -4,12 +4,13 @@
 //// MOVE THAT IN A MAIN FILE
 var options = {
     margin : {
-        left: 20,
-        top: 20
+        left: 50,
+        top: 50
     },
     width : 1000,
     height: 800,
-    barWidth: 40,
+    barWidth: 30,
+    barPadding: 10,
     barColor : '#111111',
     circeColor : '#123456'
 };
@@ -24,22 +25,13 @@ var contents = d3.map([
     { name : "martian", content:["qc","qp","sc","eede","bz","grm"]}
   ],function(d) {return d.name;});
 
-console.log('start computing');
 var  result = d3.computeIntersections(contents);
-console.log(result);
-
-
 
 // selection.call(function[, arguments…]) Invoke the function ONCE, with the provided arguments
 //The this context of the called function is also the current selection. This is slightly redundant with the first argument,
 //which we might fix in the future.
 //If you use an object's method in selection.call and need this to point to that object
 //you create a function bound to the object before calling.
-
-
-
-console.log(d3.select('#main'));
-
 
 $(document).ready(function(){
    d3.select('#main')
@@ -53,17 +45,18 @@ function dominoPlot(options) {
     // setup variable
 
     var chart = {};
-    margin = options.margin;
-    width = options.width;
-    height = options.height;
-    barWidth = options.barWidth;
-    barColor = options.barColor;
+    var margin = options.margin;
+    var width = options.width;
+    var height = options.height;
+    var barWidth = options.barWidth;
+    var barColor = options.barColor;
+    var barPadding = options.barPadding;
 
     // this fonction init the groups and the basic element
     var svgInit = function(selection) {
         console.log('Defining groups',selection);
         selection.each(function(data) {
-            console.log('SVG INIT',selection);
+
             var svg = d3.select(this);
             // create the main container
             svg.append('g')
@@ -87,8 +80,68 @@ function dominoPlot(options) {
                         dy = margin.top;
                     return 'translate(' + [dx, dy] + ')';
             });
-        // Create and translate the brush container group
+            svg.append('g')
+                .attr('class', 'yaxis domino axis')
+                .attr('transform', function() {
+                    var dx = margin.left,
+                        dy = margin.top + 500;
+                    return 'translate(' + [dx, dy] + ')';
+            });
+            // Create and translate the brush container group
         });
+    }
+    function renderAxises(data) {
+
+        // we'll use a clip path to clip the chart and move the stuff in the related g element
+
+
+        var xDomain = d3.keys(data[0].intersections);
+        var setsName = d3.keys(data[0].currentMapping);
+        var yExtent = d3.extent(data[0].intersections,function(d) { return d.elements.length; })
+        var totalWidth = xDomain.length * barWidth + (xDomain.length - 1) * barPadding;
+        console.log('THE TOTAL WIDTH',totalWidth);
+        var barHeight = 480;
+
+
+        // x scale for bars
+        var x = d3.scale.ordinal()
+            .rangeRoundBands([0, totalWidth], 0,0)
+            .domain(d3.keys(xDomain));
+
+        // y scale for domino
+        var yDomino = d3.scale.ordinal()
+            .rangeRoundBands([0, x.rangeBand() * setsName.length], .0,0)
+            .domain(setsName); // a bit dirty coz you access the main data
+
+        // y scale for bars
+        var y = d3.scale.linear()
+            .range([barHeight,0])
+            .domain(yExtent);
+
+
+        var xAxis = d3.svg.axis()
+          .scale(x)
+          .tickValues([])
+          .orient("bottom");
+
+        var yAxis = d3.svg.axis()
+          .scale(y)
+          .orient("left")
+          .ticks(yExtent[1], "-");
+
+        var yAxisDomino = d3.svg.axis()
+          .scale(yDomino)
+          .orient("left")
+          .ticks(10, "%");
+
+        var axisSelection = svg.select(".xaxis.axis");
+        axisSelection.call(xAxis);
+
+
+        svg.select('.yaxis.axis').transition().duration(400).call(yAxis);
+        svg.select('.yaxis.domino.axis').transition().duration(400).call(yAxisDomino);
+
+
     }
 
     chart.width = function(w) {
@@ -118,9 +171,14 @@ function dominoPlot(options) {
         barColor = m;
     }
 
-    chart.barWidrh = function(width) {
+    chart.barWidth = function(width) {
         if (!argument.length) { return width; }
         barWidth = width;
+    }
+
+    chart.barPadding = function(padding) {
+        if (!argument.length) { return padding; }
+        barPadding = padding;
     }
 
     chart.main = function(selection) {
@@ -131,7 +189,17 @@ function dominoPlot(options) {
                 'height' : chart.height()
             }
         );
-        svgInit(selection);
+        selection.each(function(data){
+            var div = d3.select(this)
+            svg = div.selectAll('svg').data(data);
+
+            svg.enter()
+                .append('svg')
+                .attr('width',width)
+                .attr('height',height)
+                .call(svgInit);
+            renderAxises(data);
+        });
     }
 
     return chart;
