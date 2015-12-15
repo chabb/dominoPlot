@@ -14,7 +14,8 @@
     "grunt-contrib-watch" : "^0.6.1",
     "grunt-html": "^1.4.0",
     "grunt-html-build": "^0.5.2",
-    "grunt-prettify" : "^0.4.0"
+    "grunt-prettify" : "^0.4.0",
+    "grunt-strip-debug" : "^1.0.1"
   },
   "author": "Françoic Chabbey",
   "license": "MIT",

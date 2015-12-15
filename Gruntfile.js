@@ -30,7 +30,6 @@ module.exports = function(grunt) {
 	tasks = require(grunt.uriTask + 'html-build.js')(grunt,tasks);
 
 	grunt.loadNpmTasks('grunt-contrib-watch');
-
 	// config watch, rebuild html file if changed
 	tasks.watch = {
 		dev: {
@@ -41,10 +40,11 @@ module.exports = function(grunt) {
 			],
 			tasks: ['htmlbuild:dev','prettify:dev'],
 			options: {
-      	event: ['all'] //all | deleted | changed | added
-      },
-    },
-  }
+      			event: ['all'] //all | deleted | changed | added
+      		}
+    	}
+  	};
+
 
   	grunt.loadNpmTasks('grunt-prettify')
   	tasks.prettify = {
@@ -67,8 +67,19 @@ module.exports = function(grunt) {
   		}
 	}
 
+	grunt.loadNpmTasks('grunt-strip-debug')
+	tasks.stripDebug = {
+        dist: {
+            files: {
+                'dist/app.js': 'src/app.js'
+            }
+
+    	}
+	};
+
+
   	tasks.prettify.dev.html.files[ grunt.uriStatic+'index.html'] = [grunt.uriStatic+'index.html'];
-  	console.log(tasks.watch.index);
+  	console.log(tasks.watch.dev);
 	// Register The Tasks
 	grunt.registerTask('lint', ['csslint', 'htmllint', 'jshint']);
 	grunt.registerTask('minify', ['cssmin', 'htmlmin', 'uglify']);
