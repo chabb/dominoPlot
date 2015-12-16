@@ -9,8 +9,8 @@ var options = {
     },
     width : 1000,
     height: 800,
-    barWidth: 40,
-    barPadding: 10,
+    barWidth: 45,
+    barPadding: 30,
     barColor : '#111111',
     circeColor : '#123456'
 };
@@ -104,23 +104,29 @@ function dominoPlot(options) {
         var xDomain = d3.keys(data[0].intersections);
         var setsName = d3.keys(data[0].currentMapping);
         var yExtent = d3.extent( data[0].intersectionsArray,function(d) { return d.elements.length; })
-        var totalWidth = xDomain.length * barWidth + (xDomain.length - 1) * barPadding;
+        // find the padding ratio for d3
+        var totalBarWidth = xDomain.length * barWidth;
+        var totalPadddingWidth = (xDomain.length-1) * barPadding;
+        var totalPadding = totalPadddingWidth + totalBarWidth;
+
+        // eqz totalPadding =  totalBarWidth  + totalBarWidth * barRatio;
+        var ratio = (totalPadding - totalBarWidth) /   totalBarWidth
+        // we want to feel the good ratio
+        //
 
         var barHeight = 480;
 
 
-
         // x scale for bars
         var x = d3.scale.ordinal()
-            .rangeRoundBands([0, totalWidth], 0,0)
+            .rangeRoundBands([0, totalPadding], ratio,0)
             .domain(d3.keys(xDomain));
 
         // y scale for domino
         var yDomino = d3.scale.ordinal()
-            .rangeRoundBands([0, x.rangeBand() * setsName.length], .0,0)
+            .rangeRoundBands([0, barWidth * setsName.length], .0,0)
             .domain(setsName); // a bit dirty coz you access the main data
-
-
+           console.log(x.rangeBand(),'rg');
 
         // y scale for bars
         var y = d3.scale.linear()
@@ -150,20 +156,21 @@ function dominoPlot(options) {
         svg.select('.yaxis.axis').transition().duration(400).call(yAxis);
         svg.select('.yaxis.domino.axis').transition().duration(400).call(yAxisDomino);
 
-
+        //  append group for x domino axis
         var enter = svg
         .append("g")
         .attr("class","domino-axis")
-        .attr("transform","translate("+0+","+(margin.top + 500)+")")
+        .attr("transform","translate("+50+","+(margin.top + 500)+")")
         .selectAll("g.dominos")
-        .data(data[0].intersectionsArray,function(d){ console.log('data key',d); return d.id})
+        .data(data[0].intersectionsArray,function(d){ return d.id})
         .enter();
+
         var center = (barWidth) / 2;
-        var r = center / 1.5
+        var r = center / 1.8
         var dominosChart = {};
         var dominos = enter.append("g")
           .attr("class", "dominos")
-          .attr("transform", function(d,i){ console.log('data',d); return "translate("+(barWidth * i )+",0)" });
+          .attr("transform", function(d,i){ console.log('data',d); return "translate("+(x(i))+",0)" });
 
 
         var padding = yDomino.rangeBand()/2;
@@ -177,6 +184,27 @@ function dominoPlot(options) {
           .attr("visibility",function(d,i) {
             return d.hasCircle ? "visible" : "hidden";
           })
+
+
+        // render bars 'axis', move elsewhere when ok
+
+        var chart = svg.select(".chart")
+
+        var bars = chart.selectAll(".bar")
+            .data(data[0].intersectionsArray,function(d){ console.log('data key',d); return d.id})
+
+
+        bars.enter().append("rect")
+            .attr("class", "barsContainer")
+            .attr("x", function(d,i) { return x(i); })
+            .attr("rx", function(d,i) { return 2 })
+            .attr("ry", function(d,i) { return 2 })
+            .attr("width", barWidth)
+            .attr("y", function(d,i) { return 0; })
+            .attr("height", function(d) { return barHeight; });
+
+
+
 
 
     }

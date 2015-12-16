@@ -16,3 +16,9 @@ circle {
     stroke: #555555;
     stroke-width: 2px;
 }
+.barsContainer {
+    fill: #ddddee;
+}
+.bars {
+    fill: #333322;
+}
