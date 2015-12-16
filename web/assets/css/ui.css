@@ -25,7 +25,7 @@ ul#navlist
     list-style-type: none;
 }
 
-#navlist a { padding: 3px 10px; }
+#navlist a { padding: 3px 50px; }
 
 #navlist a:link, #navlist a:visited
 {
@@ -34,7 +34,7 @@ ul#navlist
     text-decoration: none;
 }
 
-#navlist a:hover
+#navlist li:not(:first-child) a:hover
 {
     color: #fff;
     background-color: #369;

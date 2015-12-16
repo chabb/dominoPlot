@@ -65,12 +65,17 @@ function dominoPlot(options) {
         selection.each(function(data) {
             console.log('DATA FOR TOP BAR',data);
             var svg = d3.select(this);
-            svg.append('ul')
-                .attr('id','navlist')
-                .selectAll('li')
+            var list = svg.append('ul')
+                .attr('id','navlist');
+            list.append("li")
+                .classed("listTitle",true)
+                .append("a").text("TITLE")
+            list.selectAll('li.listItem')
                 .data(d3.keys(data.currentMapping))
                 .enter()
-                .append("li").append("a").text(function(d,i){ return d; });
+                .append("li")
+                .classed("listItem",true)
+                .append("a").text(function(d,i){ return d; });
         })
     };
 
