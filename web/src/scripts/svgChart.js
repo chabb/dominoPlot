@@ -29,17 +29,12 @@ var contents = d3.map([
 
 var  result = d3.computeIntersections(contents);
 
-
-
-
 // selection.call(function[, arguments…]) Invoke the function ONCE, with the provided arguments
 //The this context of the called function is also the current selection. This is slightly redundant with the first argument,
 //which we might fix in the future.
 //If you use an object's method in selection.call and need this to point to that object
 //you create a function bound to the object before calling.
-
 //APPEND returns a selection with the added ELEMENT !!
-
 
 $(document).ready(function(){
    d3.select('#main')
@@ -62,6 +57,22 @@ function dominoPlot(options) {
     var barPadding = options.barPadding;
     var barChartHeight = options.barChartHeight;
     var paddingBetweenChartAndDominoAxis = options.paddingBetweenChartAndDominoAxis;
+
+
+
+    // this function renders the top list of active/inactive sets
+    var renderSetsMenu = function(selection) {
+        selection.each(function(data) {
+            console.log('DATA FOR TOP BAR',data);
+            var svg = d3.select(this);
+            svg.append('ul')
+                .attr('id','navlist')
+                .selectAll('li')
+                .data(d3.keys(data.currentMapping))
+                .enter()
+                .append("li").append("a").text(function(d,i){ return d; });
+        })
+    };
 
     // this fonction init the groups and the basic element
     var svgInit = function(selection) {
@@ -284,8 +295,17 @@ function dominoPlot(options) {
         );
         selection.each(function(data){
             var div = d3.select(this)
-            svg = div.selectAll('svg').data(data);
 
+            // RENDER VERTICAL TOP BAR
+            var mainList = div.selectAll('div#chartTopBar').data(data);
+            mainList.enter()
+                .append('div')
+                .attr('id','chartTopBar')
+                .call(renderSetsMenu);
+
+
+            // RENDER SVG STUFF
+            svg = div.selectAll('svg').data(data);
             svg.enter()
                 .append('svg')
                 .attr('width',width)
