@@ -166,12 +166,14 @@ function dominoPlot(options) {
           .attr("transform", function(d,i){ console.log('data',d); return "translate("+(barWidth * i )+",0)" });
 
 
+        var padding = yDomino.rangeBand()/2;
         dominos.selectAll("circle").data(function(d){return reprojectArray(d,data[0])},function(d,i,j){ return d.compoundId; })
           .enter()
           .append("circle")
           .attr("cx",function(d,i){ return center})
-          .attr("cy",function(d,i){ console.log(d,(result.currentMapping[d.set]));return center + (x.rangeBand())* (result.currentMapping[d.set]-1)} )
-          .attr("r", function(d) {  return r })
+          .attr("cy",function(d,i){ return padding + yDomino(d.set )}) // quasi-bon il fuat la moitioe en fiat
+          .attr("r", function(d)  { return r })
+          .attr("fill","none")
           .attr("visibility",function(d,i) {
             return d.hasCircle ? "visible" : "hidden";
           })
