@@ -7,12 +7,14 @@ var options = {
         left: 50,
         top: 50
     },
-    width : 1000,
-    height: 800,
-    barWidth: 45,
+    width : 1400,
+    height: 1000,
+    barWidth: 46,
     barPadding: 30,
     barColor : '#111111',
-    circeColor : '#123456'
+    circleColor : '#555555',
+    barChartHeight: 600,
+    paddingBetweenChartAndDominoAxis: 40
 };
 
 var chart = dominoPlot(options);
@@ -55,8 +57,11 @@ function dominoPlot(options) {
     var width = options.width;
     var height = options.height;
     var barWidth = options.barWidth;
+    var circleColor = options.circleColor;
     var barColor = options.barColor;
     var barPadding = options.barPadding;
+    var barChartHeight = options.barChartHeight;
+    var paddingBetweenChartAndDominoAxis = options.paddingBetweenChartAndDominoAxis;
 
     // this fonction init the groups and the basic element
     var svgInit = function(selection) {
@@ -90,7 +95,7 @@ function dominoPlot(options) {
                 .attr('class', 'yaxis domino axis')
                 .attr('transform', function() {
                     var dx = margin.left,
-                        dy = margin.top + 500;
+                        dy = chart.dominoAxisPosition();
                     return 'translate(' + [dx, dy] + ')';
             });
             // Create and translate the brush container group
@@ -98,23 +103,22 @@ function dominoPlot(options) {
     }
     function renderAxises(data) {
 
-        // we'll use a clip path to clip the chart and move the stuff in the related g element
-
+        //TODO we'll use a clip path to clip the chart and move the stuff in the related g element
 
         var xDomain = d3.keys(data[0].intersections);
         var setsName = d3.keys(data[0].currentMapping);
         var yExtent = d3.extent( data[0].intersectionsArray,function(d) { return d.elements.length; })
-        // find the padding ratio for d3
+
         var totalBarWidth = xDomain.length * barWidth;
         var totalPadddingWidth = (xDomain.length-1) * barPadding;
         var totalPadding = totalPadddingWidth + totalBarWidth;
-
-        // eqz totalPadding =  totalBarWidth  + totalBarWidth * barRatio;
+        // find the padding ratio for d3
+        // equation to solve totalPadding =  totalBarWidth  + totalBarWidth * barRatio;
         var ratio = (totalPadding - totalBarWidth) /   totalBarWidth
-        // we want to feel the good ratio
-        //
 
-        var barHeight = 480;
+
+
+        var barHeight = barChartHeight;
 
 
         // x scale for bars
@@ -157,10 +161,11 @@ function dominoPlot(options) {
         svg.select('.yaxis.domino.axis').transition().duration(400).call(yAxisDomino);
 
         //  append group for x domino axis
+        console.log(chart,options);
         var enter = svg
         .append("g")
         .attr("class","domino-axis")
-        .attr("transform","translate("+50+","+(margin.top + 500)+")")
+        .attr("transform","translate("+50+","+chart.dominoAxisPosition()+")")
         .selectAll("g.dominos")
         .data(data[0].intersectionsArray,function(d){ return d.id})
         .enter();
@@ -180,20 +185,19 @@ function dominoPlot(options) {
           .attr("cx",function(d,i){ return center})
           .attr("cy",function(d,i){ return padding + yDomino(d.set )}) // quasi-bon il fuat la moitioe en fiat
           .attr("r", function(d)  { return r })
-          .attr("fill","none")
-          .attr("visibility",function(d,i) {
-            return d.hasCircle ? "visible" : "hidden";
+          .attr("fill",function(d,i) {
+            return d.hasCircle ? "none" : circleColor;
           })
 
 
-        // render bars 'axis', move elsewhere when ok
+        // render bars 'axis' TODO move elsewhere when ok and fix the chart variable
+        var _chart = svg.select(".chart")
 
-        var chart = svg.select(".chart")
-
-        var bars = chart.selectAll(".bar")
+        var bars = _chart.selectAll(".bar")
             .data(data[0].intersectionsArray,function(d){ console.log('data key',d); return d.id})
 
 
+        // lots of visual artifacts, try to understand what happend
         bars.enter().append("rect")
             .attr("class", "barsContainer")
             .attr("x", function(d,i) { return x(i); })
@@ -203,9 +207,21 @@ function dominoPlot(options) {
             .attr("y", function(d,i) { return 0; })
             .attr("height", function(d) { return barHeight; });
 
+        bars.enter().append("text")
+            .attr("x", function(d,i) { return x(i)+barWidth/2; })
+            .attr("y", function(d,i) { return  barHeight - 20 - y(d.elements.length);})
+            .attr("dy", ".35em")
+            .attr("text-anchor","middle")
+            .text(function(d) { return (d.elements.length); });
 
-
-
+        bars.enter().append("rect")
+            .attr("class", "bars")
+            .attr("x", function(d,i) { return x(i)+2; })
+            .attr("rx", function(d,i) { return 2 })
+            .attr("ry", function(d,i) { return 2 })
+            .attr("width", barWidth-4)
+            .attr("y", function(d,i) { return  barHeight - y(d.elements.length);})
+            .attr("height", function(d) { return y(d.elements.length); });
 
     }
 
@@ -225,6 +241,18 @@ function dominoPlot(options) {
         margin = m;
         return chart;
     };
+
+    chart.barChartHeight = function(m) {
+        if (!arguments.length) { return barChartHeight; }
+        barChartHeight = m;
+        return chart;
+    }
+
+    chart.paddingBetweenChartAndDominoAxis = function(m) {
+         if (!arguments.length) { return paddingBetweenChartAndDominoAxis; }
+        paddingBetweenChartAndDominoAxis = m;
+        return chart;
+    }
 
     chart.circleColor = function(m) {
         if (!argument.length) { return color};
@@ -265,6 +293,9 @@ function dominoPlot(options) {
                 .call(svgInit);
             renderAxises(data);
         });
+    }
+    chart.dominoAxisPosition = function () {
+        return barChartHeight + paddingBetweenChartAndDominoAxis + margin.top;
     }
 
     return chart;

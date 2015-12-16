@@ -6,4 +6,7 @@
 
 #main {
     background-color: #EEEEFF;
+    position: relative;
+    left: 200px;
+    top: 10px;
 }
