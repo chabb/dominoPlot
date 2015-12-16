@@ -1,10 +1,12 @@
 dominos {
   stroke:black;
 }
-.axis text {
-  font: 10px sans-serif;
+text {
+  font: 10px Helvetica;
 }
-
+#main {
+    border: 1px #EEEEFF solid; /* prevent margin collapsing */
+}
 .axis line,
 .axis path {
   fill: none;

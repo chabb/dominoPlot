@@ -295,7 +295,7 @@ function dominoPlot(options) {
         selection.style(
             {
                 'width'  : chart.width(),
-                'height' : chart.height()
+                'height' : chart.height()+200 // TODO FIXME
             }
         );
         selection.each(function(data){
