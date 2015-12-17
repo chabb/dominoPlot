@@ -82,7 +82,7 @@ function dominoPlot(options) {
                     d3.select(this)
                         .classed("active",function(d) { return result.stateTable[d].active})
                         .classed("inactive",function(d) { return !result.stateTable[d].active})
-
+                        // filter stuff
                 })
 
         })
@@ -190,7 +190,7 @@ function dominoPlot(options) {
         var enter = svg
         .append("g")
         .attr("class","domino-axis")
-        .attr("transform","translate("+50+","+chart.dominoAxisPosition()+")")
+        .attr("transform","translate("+margin.left+","+chart.dominoAxisPosition()+")")
         .selectAll("g.dominos")
         .data(data[0].intersectionsArray,function(d){ return d.id})
         .enter();
