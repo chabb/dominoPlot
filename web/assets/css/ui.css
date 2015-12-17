@@ -45,3 +45,10 @@ ul#navlist
     background-color: #369;
     text-decoration: none;
 }
+.active {
+    color : #222;
+}
+
+.inactive {
+    color : #dda;
+}

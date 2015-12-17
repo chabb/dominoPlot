@@ -32,7 +32,7 @@ d3.computeIntersections = function(maps,originalMapping)
 
     var invertedMapping = computeInvertedDictionnary(dominoMapping);
     var originalInvertedMapping = computeInvertedDictionnary(originalMapping ? originalMapping : dominoMapping);
-
+    var table = buildStateTable(dominoMapping);
 
     return {
         intersections : intersections,
@@ -43,7 +43,8 @@ d3.computeIntersections = function(maps,originalMapping)
         currentInvertedMapping : invertedMapping,
         originalMapping : originalMapping ? originalMapping : dominoMapping,
         originalInvertedMapping : originalInvertedMapping,
-        numberOfDominos : limit
+        numberOfDominos : limit,
+        stateTable : table
     }
 
     function computeInvertedDictionnary(map) {
@@ -75,6 +76,17 @@ d3.computeIntersections = function(maps,originalMapping)
             domino.push(newValue);
         }
         return domino;
+    }
+
+    function buildStateTable(mapping) {
+        var table = {};
+        var keys = d3.keys(mapping);
+        for (var i=0;i<keys.length;i++) {
+            table[keys[i]]= {
+                active : true
+            }
+        }
+        return table;
     }
 }
 

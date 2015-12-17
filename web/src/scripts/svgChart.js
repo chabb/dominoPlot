@@ -75,7 +75,16 @@ function dominoPlot(options) {
                 .enter()
                 .append("li")
                 .classed("listItem",true)
-                .append("a").text(function(d,i){ return d; });
+                .append("a").text(function(d,i){ return d; })
+                .classed("active",function(d) { return result.stateTable[d].active})
+                .on("click",function(d,i) {
+                    result.stateTable[d].active = !result.stateTable[d].active
+                    d3.select(this)
+                        .classed("active",function(d) { return result.stateTable[d].active})
+                        .classed("inactive",function(d) { return !result.stateTable[d].active})
+
+                })
+
         })
     };
 
