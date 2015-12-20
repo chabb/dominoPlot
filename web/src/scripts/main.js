@@ -6,7 +6,7 @@
 //If you use an object's method in selection.call and need this to point to that object
 //you create a function bound to the object before calling.
 //APPEND returns a selection with the added ELEMENT !!
-
+var D;
 $(document).ready(function(){
  main();
 })
@@ -40,6 +40,7 @@ function main() {
       ],function(d) {return d.name;});
 
     var  result = d3.computeIntersections(contents);
+    D = result;
     d3.select('#main')
     .datum([result])
     .call(chart.main);

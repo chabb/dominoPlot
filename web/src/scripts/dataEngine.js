@@ -34,9 +34,12 @@ d3.computeIntersections = function(maps,originalMapping)
     var originalInvertedMapping = computeInvertedDictionnary(originalMapping ? originalMapping : dominoMapping);
     var table = buildStateTable(dominoMapping);
 
-    return {
+    var baseIntersectionsArray =  d3.values(intersections);
+    var baseIntersections = intersections;
+
+    var datas = {
         intersections : intersections,
-        intersectionsArray: d3.values(intersections),
+        intersectionsArray: baseIntersectionsArray.slice(),
         distinctElements : elements,
         numberOfSets : numberOfSets,
         currentMapping : dominoMapping,
@@ -44,8 +47,96 @@ d3.computeIntersections = function(maps,originalMapping)
         originalMapping : originalMapping ? originalMapping : dominoMapping,
         originalInvertedMapping : originalInvertedMapping,
         numberOfDominos : limit,
-        stateTable : table
+        stateTable : table,
+        turnOnSet : turnOnSet,
+        turnOffSet : turnOffSet
     }
+    return datas;
+
+    function turnOnSet(setName) {
+        // we must find up the original and add it back to the datas
+
+
+        datas.numberOfSets++;
+        //datas.numberOfDominos = (newIntersections.length)
+
+    }
+
+    // all the stuff is too tied to our universe, try to make it more
+    // independant
+    function turnOffSet(setName) {
+        // we must fund up the original and ad it back to the datas
+        // First step computes which intersection have to merge
+        console.log(setName,datas);
+        var indexOfSet = datas.originalMapping[setName] - 1;
+        var numberOfSets = datas.numberOfSets;
+        var intersections = datas.intersectionsArray;
+        console.log(intersections);
+        var bitMask = 0;
+        for (var i=0;i<numberOfSets;i++) {
+            bitMask = bitMask +  ( i == indexOfSet ? 0 : Math.pow(2,i) )
+        }
+        var mergeMapping = []; // used for debugging purpose
+        var originalIdToMergedId = [];     // index is the orignal Id, value is the destination Id
+
+        console.log(bitMask.toString(2));
+        for (var i=0;i<intersections.length;i++) {
+            var originalId = intersections[i].id;
+            var mergedId = intersections[i].id & bitMask;
+            mergeMapping.push({
+                originalId: originalId,
+                mergedId: mergedId
+            });
+            if (originalId != mergedId) {
+                originalIdToMergedId[originalId] = mergedId;
+            }
+        }
+        // Second step merge intersections
+        var numberOfIntersections = intersections.length;
+        console.log(originalIdToMergedId);
+        var newIntersections = [];
+        for (var j=0;j<numberOfIntersections;j++) {
+            console.log(j,numberOfIntersections);
+            var interToMerge = intersections[j];
+
+            if (originalIdToMergedId[j] >= 0 ) {
+                console.log("merge",j,"into",originalIdToMergedId[j]);
+                var targetIntersection = intersections[originalIdToMergedId[j]];
+                for (var k = 0;k< interToMerge.elements.length;k++) {
+                //
+                    addElementToSet(targetIntersection.elements, interToMerge.elements[k])
+                }
+                newIntersections.push(targetIntersection);
+                targetIntersection.id = remove_bit(targetIntersection.id,indexOfSet);
+                targetIntersection.dominoRepresentation.splice(indexOfSet,1);
+                interToMerge.elements = null;
+            // we remove the merged intersection
+                console.log('removing',j,targetIntersection)
+            }
+
+        }
+
+        // remove all useless intersections
+
+        datas.intersectionsArray = newIntersections;
+        var map = {};
+        for (var i=0; i<newIntersections.length;i++) {
+            map[newIntersections[i].id]=newIntersections[i];
+        }
+        datas.numberOfSets--;
+        datas.numberOfDominos = (newIntersections.length)
+        datas.intersections = map;
+
+        // Third step turn off inactive element
+    }
+    // set is currently just an array, but we plan to have some kind of representation
+    function addElementToSet(set, element) {
+        console.log('add to set',element)
+        set.push(element);
+    }
+
+    // a little gem :)
+    function remove_bit (x,n) { return x ^ (((x >> 1) ^ x) & (0xffffffff << n)); }
 
     function computeInvertedDictionnary(map) {
         var invertedMap = {};
@@ -104,6 +195,8 @@ function reprojectArray(datum, context) {
   // le mieux c'est de garder cette id, ca garde l'idee de "RAJOUT", et quand on rajoute un set
   // celui-ci vient se mettre automatiquement a la fing
 
+  // le filtrage devrait aussi se faire ici
+
 
   for (var i=0;i<baseArray.length;i++) {
     //var mappedSet= invertedBaseMAPPING[i+1];
@@ -118,6 +211,7 @@ function reprojectArray(datum, context) {
       compoundId: datum.id+invertedResult[i+1]
     })
   }
+  console.log('NA',newArray);
    return newArray
 }
 

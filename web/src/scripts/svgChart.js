@@ -41,7 +41,8 @@ function dominoPlot(options) {
                     d3.select(this)
                         .classed("active",function(d) { return data.stateTable[d].active})
                         .classed("inactive",function(d) { return !data.stateTable[d].active})
-                        // re-render
+                    console.log("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+                    renderAxises([data]);
 
                 })
 
@@ -83,6 +84,10 @@ function dominoPlot(options) {
                         dy = chart.dominoAxisPosition();
                     return 'translate(' + [dx, dy] + ')';
             });
+
+            svg.append("g")
+                .attr("class","domino-axis")
+                .attr("transform","translate("+margin.left+","+chart.dominoAxisPosition()+")")
             // Create and translate the brush container group
         });
     }
@@ -91,8 +96,13 @@ function dominoPlot(options) {
         //TODO we'll use a clip path to clip the chart and move the stuff in the related g element
 
         var xDomain = d3.keys(data[0].intersections);
-        var setsName = d3.keys(data[0].currentMapping);
+
+        var setsName = (d3.keys(data[0].currentMapping)).filter(function(d,i) {
+            return data[0].stateTable[d].active;
+        });
+
         var yExtent = d3.extent( data[0].intersectionsArray,function(d) { return d.elements.length; })
+        yExtent = [0, yExtent[1]];
 
         var totalBarWidth = xDomain.length * barWidth;
         var totalPadddingWidth = (xDomain.length-1) * barPadding;
@@ -115,18 +125,19 @@ function dominoPlot(options) {
         var yDomino = d3.scale.ordinal()
             .rangeRoundBands([0, barWidth * setsName.length], .0,0)
             .domain(setsName); // a bit dirty coz you access the main data
-           console.log(x.rangeBand(),'rg');
+        console.log(x.rangeBand(),'rg',setsName);
+
 
         // y scale for bars
         var y = d3.scale.linear()
-            .range([0,barHeight])
+            .range([barHeight,0])
             .domain(yExtent);
 
 
         var xAxis = d3.svg.axis()
           .scale(x)
           .tickValues([])
-          .orient("bottom");
+          .orient("top");
 
         var yAxis = d3.svg.axis()
           .scale(y)
@@ -147,13 +158,10 @@ function dominoPlot(options) {
 
         //  append group for x domino axis
         console.log(chart,options);
-        var enter = svg
-        .append("g")
-        .attr("class","domino-axis")
-        .attr("transform","translate("+margin.left+","+chart.dominoAxisPosition()+")")
-        .selectAll("g.dominos")
-        .data(data[0].intersectionsArray,function(d){ return d.id})
-        .enter();
+        var  dominoElements = svg.select('g.domino-axis')
+            .selectAll("g.dominos")
+            .data(data[0].intersectionsArray,function(d){ return d.id})
+        var enter = dominoElements.enter();
 
         var center = (barWidth) / 2;
         var r = center / 1.8
@@ -162,28 +170,38 @@ function dominoPlot(options) {
           .attr("class", "dominos")
           .attr("transform", function(d,i){ console.log('data',d); return "translate("+(x(i))+",0)" });
 
+        dominoElements.exit().transition().duration(1000).style('opacity',0).remove();
+
+        dominoElements.attr("transform", function(d,i){ console.log('data',d); return "translate("+(x(i))+",0)" });
+
+
 
         var padding = yDomino.rangeBand()/2;
-        dominos.selectAll("circle").data(function(d){return reprojectArray(d,data[0])},function(d,i,j){ return d.compoundId; })
-          .enter()
+        var circles = dominoElements.selectAll("circle").data(function(d){return reprojectArray(d,data[0])},function(d,i,j){ return d.compoundId; })
+        circles.enter()
           .append("circle")
           .attr("cx",function(d,i){ return center})
           .attr("cy",function(d,i){ return padding + yDomino(d.set )}) // quasi-bon il fuat la moitioe en fiat
           .attr("r", function(d)  { return r })
           .attr("fill",function(d,i) {
             return d.hasCircle ?  circleColor : "none";
-          })
+          });
+        circles.exit().remove();
+
 
 
         // render bars 'axis' TODO move elsewhere when ok and fix the chart variable
         var _chart = svg.select(".chart")
-
-        var bars = _chart.selectAll(".bar")
-            .data(data[0].intersectionsArray,function(d){ console.log('data key',d); return d.id})
-
+        console.log(data[0].intersectionsArray)
+        var bars = _chart.selectAll(".barsGroup")
+            .data(data[0].intersectionsArray,function(d){ console.log('data key',d.id); return d.id})
 
         // lots of visual artifacts, try to understand what happend
-        bars.enter().append("rect")
+
+        var enteringBars = bars.enter().append("g").classed("barsGroup",true);
+
+
+        enteringBars.append("rect")
             .attr("class", "barsContainer")
             .attr("x", function(d,i) { return x(i); })
             .attr("rx", function(d,i) { return 2 })
@@ -192,22 +210,32 @@ function dominoPlot(options) {
             .attr("y", function(d,i) { return 0; })
             .attr("height", function(d) { return barHeight; });
 
-        bars.enter().append("text")
+        enteringBars.append("text")
             .attr("x", function(d,i) { return x(i)+barWidth/2; })
-            .attr("y", function(d,i) { return  barHeight - 20 - y(d.elements.length);})
+            .attr("y", function(d,i) { return  -20 + y(d.elements.length);})
             .attr("dy", ".35em")
             .attr("text-anchor","middle")
-            .text(function(d) { return (d.elements.length); });
 
-        bars.enter().append("rect")
+
+        enteringBars.append("rect")
             .attr("class", "bars")
             .attr("x", function(d,i) { return x(i)+2; })
             .attr("rx", function(d,i) { return 2 })
             .attr("ry", function(d,i) { return 2 })
             .attr("width", barWidth-4)
-            .attr("y", function(d,i) { return  barHeight - y(d.elements.length);})
-            .attr("height", function(d) { return y(d.elements.length); });
 
+
+        // update
+        bars.select('.bars')
+            .attr("y", function(d,i) { return y(d.elements.length);  })
+            .attr("height", function(d) { return  barHeight - y(d.elements.length); });
+        bars.select('text').text(function(d) { return (d.elements.length); })
+         .attr("y", function(d,i) { return  -20 + y(d.elements.length);})
+         .text(function(d) { return (d.elements.length); });
+
+        //exit
+        bars.exit().select('.bars').transition().duration(1000).attr("y",y(0)).attr("height",0)
+        bars.exit().transition().duration(1000).style('opacity',0).remove();
     }
 
     chart.width = function(w) {
