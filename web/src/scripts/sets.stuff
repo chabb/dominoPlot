@@ -1,0 +1,28 @@
+
+Input: Given an array of n elements which contains elements from 0 to n-1, with any of these numbers appearing any number of times.
+
+Goal : To find these repeating numbers in O(n) and using only constant memory space.
+
+For example, let n be 7 and array be {1, 2, 3, 1, 3, 0, 6}, the answer should be 1 & 3. I checked similar questions here but the answers used some data structures like HashSet etc.
+
+Any efficient algorithm for the same?
+
+
+This is what I came up with, which doesn't require the additional sign bit:
+
+for i := 0 to n - 1
+    while A[A[i]] != A[i]
+        swap(A[i], A[A[i]])
+    end while
+end for
+
+for i := 0 to n - 1
+    if A[i] != i then
+        print A[i]
+    end if
+end for
+The first loop permutes the array so that if element x is present at least once, then one of those entries will be at position A[x].
+
+Note that it may not look O(n) at first blush, but it is - although it has a nested loop, it still runs in O(N) time. A swap only occurs if there is an i such that A[i] != i, and each swap sets at least one element such that A[i] == i, where that wasn't true before. This means that the total number of swaps (and thus the total number of executions of the while loop body) is at most N-1.
+
+The second loop prints the values of x for which A[x] doesn't equal x - since the first loop guarantees that if x exists at least once in the array, one of those instances will be at A[x], this means that it prints those values of x which are not present in the array.

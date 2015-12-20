@@ -35,8 +35,14 @@ function dominoPlot(options) {
                 .append("a").text(function(d,i){ return d; })
                 .classed("active",function(d) { return data.stateTable[d].active})
                 .on("click",function(d,i) {
-                    data.stateTable[d].active = !data.stateTable[d].active
-                    data.turnOffSet(d);
+                    var newState = !data.stateTable[d].active;
+                    data.stateTable[d].active = newState;
+
+                    if (newState) {
+                        data.turnOnSet(d);
+                    } else {
+                        data.turnOffSet(d);
+                    }
 
                     d3.select(this)
                         .classed("active",function(d) { return data.stateTable[d].active})

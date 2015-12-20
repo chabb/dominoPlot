@@ -55,11 +55,52 @@ d3.computeIntersections = function(maps,originalMapping)
 
     function turnOnSet(setName) {
         // we must find up the original and add it back to the datas
+        var indexOfSet = datas.originalMapping[setName] - 1;
+        var addedSet = maps.get(setName);
+        var numberOfSets = datas.numberOfSets;
+        var intersections = datas.intersectionsArray;
+
+        // First, we compute the id of the new intersections
+        var spawnedIds = [];
+        var newIntersections = [];
+        console.log(setName,addedSet);
+        for (var i=0;i<intersections.length;i++) {
+            var id = intersections[i].id;
+            var newId = insertBit(id, indexOfSet, 1);
+            var oldId = insertBit(id, indexOfSet, 0);
+            spawnedIds.push({
+                idWithoutNewSet: newId,
+                idWithNewSet: oldId
+            });
+            // we compute the common elements between the old intersection
+            // and the new set. Common elements are pushed in the new Intersections
+            var commons = computeElementsInCommon(addedSet.content,intersections[i].elements);
+            var a = {
+                id : newId,
+                elements : commons.elementInCommon,
+                dominoRepresentation : computeDominoRepresentation(newId)
+            };
+            var b = {
+                id : oldId,
+                elements : commons.elementNotInCommon,
+                dominoRepresentation : computeDominoRepresentation(oldId)
+            };
+            newIntersections[a.id]=a;
+            newIntersections[b.id]=b;
+            console.log(a,b);
 
 
+        }
+
+        var map = {};
+        for (var i=0; i<newIntersections.length;i++) {
+            map[newIntersections[i].id]=newIntersections[i];
+        }
         datas.numberOfSets++;
-        //datas.numberOfDominos = (newIntersections.length)
-
+        datas.numberOfDominos = (newIntersections.length)
+        datas.intersections = map
+        datas.intersectionsArray = newIntersections;
+        return;
     }
 
     // all the stuff is too tied to our universe, try to make it more
@@ -131,12 +172,63 @@ d3.computeIntersections = function(maps,originalMapping)
     }
     // set is currently just an array, but we plan to have some kind of representation
     function addElementToSet(set, element) {
-        console.log('add to set',element)
-        set.push(element);
+        console.log(set);
+        if (set.indexOf(element) == -1) { set.push(element); }
     }
+
+    // first array contains the element NOT in common
+    // second array contains the element in common
+    function computeElementsInCommon(setA,setB) {
+        //setA = set to add
+        //setB = set of the old intersection
+        var elA = setB;
+        var elB = setA;
+        console.log(elA,elB);
+        var histogram = {};
+        var returnObject = {
+            elementInCommon:[],
+            elementNotInCommon:[]
+        };
+
+        //compute histogram
+        for (var i=0;i<elA.length;i++) {
+            histogram[elA[i]] = 1;
+        }
+        for (var j=0;j<elB.length;j++) {
+            if (!histogram[elB[j]]) continue;
+            histogram[elB[j]] = ++histogram[elB[j]];
+        }
+        $.each(histogram,function(k,v){
+            if (v==1) {
+                returnObject.elementNotInCommon.push(k);
+            } else {
+                returnObject.elementInCommon.push(k);
+            }
+        })
+        return returnObject;
+    }
+
 
     // a little gem :)
     function remove_bit (x,n) { return x ^ (((x >> 1) ^ x) & (0xffffffff << n)); }
+
+
+    function insertBit(n,   // The integer we are going to insert into
+                 position, // position is the position of the new bit to be inserted
+                 new_bit) // whether the newly inserted bit is true or false
+    {
+        var x = n;
+        var y = x;
+        x <<= 1;
+        if (new_bit)
+            x |= (( 1) << position);
+        else
+            x &= ~(( 1) << position);
+        x &= ((~( 0)) << position);
+        y &= ~((~( 0)) << position);
+        x |= y;
+        return x;
+    }
 
     function computeInvertedDictionnary(map) {
         var invertedMap = {};
