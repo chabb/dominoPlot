@@ -6,6 +6,7 @@ text {
 }
 #main {
     border: 1px #EEEEFF solid; /* prevent margin collapsing */
+
 }
 .axis line,
 .axis path {

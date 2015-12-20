@@ -1,47 +1,4 @@
 
-
-
-//// MOVE THAT IN A MAIN FILE
-var options = {
-    margin : {
-        left: 50,
-        top: 50
-    },
-    width : 1400,
-    height: 1000,
-    barWidth: 46,
-    barPadding: 30,
-    barColor : '#111111',
-    circleColor : '#555555',
-    barChartHeight: 600,
-    paddingBetweenChartAndDominoAxis: 40
-};
-
-var chart = dominoPlot(options);
-var contents = d3.map([
-    { name : "mice", content:["a","b","c","d","q"]},
-    { name : "human", content:["a","b","z","d","q"]},
-    { name : "rice", content:["eee","b","p","q"]},
-    { name : "ghouls", content:["rip","ba","pa","qd","df","fds","dfs","dfs"]},
-    { name : "cat", content:["gd","zd","sc","sq"]},
-    { name : "martian", content:["qc","qp","sc","eede","bz","grm"]}
-  ],function(d) {return d.name;});
-
-var  result = d3.computeIntersections(contents);
-
-// selection.call(function[, arguments…]) Invoke the function ONCE, with the provided arguments
-//The this context of the called function is also the current selection. This is slightly redundant with the first argument,
-//which we might fix in the future.
-//If you use an object's method in selection.call and need this to point to that object
-//you create a function bound to the object before calling.
-//APPEND returns a selection with the added ELEMENT !!
-
-$(document).ready(function(){
-   d3.select('#main')
-    .datum([result])
-    .call(chart.main);
-})
-
 // you have a data-bound element
 /// END OF MAIN FILE
 function dominoPlot(options) {
@@ -57,7 +14,7 @@ function dominoPlot(options) {
     var barPadding = options.barPadding;
     var barChartHeight = options.barChartHeight;
     var paddingBetweenChartAndDominoAxis = options.paddingBetweenChartAndDominoAxis;
-
+    var result; // TODO FIXME => TRY TO GET RID OF THIS REFERENCE
 
 
     // this function renders the top list of active/inactive sets
@@ -76,13 +33,16 @@ function dominoPlot(options) {
                 .append("li")
                 .classed("listItem",true)
                 .append("a").text(function(d,i){ return d; })
-                .classed("active",function(d) { return result.stateTable[d].active})
+                .classed("active",function(d) { return data.stateTable[d].active})
                 .on("click",function(d,i) {
-                    result.stateTable[d].active = !result.stateTable[d].active
+                    data.stateTable[d].active = !data.stateTable[d].active
+                    data.turnOffSet(d);
+
                     d3.select(this)
-                        .classed("active",function(d) { return result.stateTable[d].active})
-                        .classed("inactive",function(d) { return !result.stateTable[d].active})
-                        // filter stuff
+                        .classed("active",function(d) { return data.stateTable[d].active})
+                        .classed("inactive",function(d) { return !data.stateTable[d].active})
+                        // re-render
+
                 })
 
         })
@@ -159,7 +119,7 @@ function dominoPlot(options) {
 
         // y scale for bars
         var y = d3.scale.linear()
-            .range([barHeight,0])
+            .range([0,barHeight])
             .domain(yExtent);
 
 
@@ -211,7 +171,7 @@ function dominoPlot(options) {
           .attr("cy",function(d,i){ return padding + yDomino(d.set )}) // quasi-bon il fuat la moitioe en fiat
           .attr("r", function(d)  { return r })
           .attr("fill",function(d,i) {
-            return d.hasCircle ? "none" : circleColor;
+            return d.hasCircle ?  circleColor : "none";
           })
 
 
