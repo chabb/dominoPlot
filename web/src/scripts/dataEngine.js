@@ -37,6 +37,8 @@ d3.computeIntersections = function(maps,originalMapping)
     var baseIntersectionsArray =  d3.values(intersections);
     var baseIntersections = intersections;
 
+    //var transientMapping = originalMapping;
+
     var datas = {
         intersections : intersections,
         intersectionsArray: baseIntersectionsArray.slice(),
@@ -55,7 +57,7 @@ d3.computeIntersections = function(maps,originalMapping)
 
     function turnOnSet(setName) {
         // we must find up the original and add it back to the datas
-        var indexOfSet = datas.originalMapping[setName] - 1;
+        var indexOfSet = datas.currentMapping[setName] - 1;
         var addedSet = maps.get(setName);
         var numberOfSets = datas.numberOfSets;
         var intersections = datas.intersectionsArray;
@@ -100,7 +102,23 @@ d3.computeIntersections = function(maps,originalMapping)
         datas.numberOfDominos = (newIntersections.length)
         datas.intersections = map
         datas.intersectionsArray = newIntersections;
-        return;
+        // add the set to the current view Mapping
+        var newMapping = {};
+        var newInvertedMapping = {};
+        var delta = 0;
+        $.each(datas.originalMapping,function(k,v){
+
+            if (table[k].active) {
+                newMapping[k] = v+delta;
+                newInvertedMapping[v+delta] = k;
+            } else {
+                delta--;
+            }
+        });
+        console.log('ADDED',newMapping,newInvertedMapping)
+        datas.currentMapping = newMapping;
+        datas.currentInvertedMapping = newInvertedMapping;
+
     }
 
     // all the stuff is too tied to our universe, try to make it more
@@ -109,7 +127,7 @@ d3.computeIntersections = function(maps,originalMapping)
         // we must fund up the original and ad it back to the datas
         // First step computes which intersection have to merge
         console.log(setName,datas);
-        var indexOfSet = datas.originalMapping[setName] - 1;
+        var indexOfSet = datas.currentMapping[setName] - 1;
         var numberOfSets = datas.numberOfSets;
         var intersections = datas.intersectionsArray;
         console.log(intersections);
@@ -168,8 +186,25 @@ d3.computeIntersections = function(maps,originalMapping)
         datas.numberOfDominos = (newIntersections.length)
         datas.intersections = map;
 
-        // Third step turn off inactive element
+
+        // we compute the new view mappings
+        var newMapping = {};
+        var newInvertedMapping = {};
+        var target = datas.originalMapping[setName];
+        var delta = 0;
+        $.each(datas.originalMapping,function(k,v){
+            if (table[k].active) {
+                newMapping[k] = v-delta;
+                newInvertedMapping[v-delta] = k;
+            } else {
+                delta++;
+            }
+
+        });
+        datas.currentMapping = newMapping;
+        datas.currentInvertedMapping = newInvertedMapping;
     }
+
     // set is currently just an array, but we plan to have some kind of representation
     function addElementToSet(set, element) {
         console.log(set);
@@ -277,34 +312,27 @@ function reprojectArray(datum, context) {
 
     var baseArray = datum.dominoRepresentation;
     var newArray = [];
-    var baseMAPPING = context.originalMapping;
+    var baseMAPPING = context.currentMapping; // name -> index of set
     var invertedResult = context.currentInvertedMapping;
-     console.log('working on',datum,invertedResult,context);
-  // comme on itere sur le tableau, chaque element correspond a un ensemble
-  // ca devrait marcher car l'id est l'id d'une intersection donnée et ne change pas
-  // MAIS l'element de l'intersection change
-
-  // le mieux c'est de garder cette id, ca garde l'idee de "RAJOUT", et quand on rajoute un set
-  // celui-ci vient se mettre automatiquement a la fing
-
-  // le filtrage devrait aussi se faire ici
+    console.log('working on',datum,invertedResult,context);
 
 
-  for (var i=0;i<baseArray.length;i++) {
-    //var mappedSet= invertedBaseMAPPING[i+1];
-    //var mappedIndex = result.dominoMapping[mappedSet]-1;
-    var mappedSet = invertedResult[i+1];
-    var mappedIndex =  baseMAPPING[mappedSet]-1;
-    console.log('CHECKING CIRCLE FOR',mappedSet,mappedIndex);
-    newArray.push ( {
-      baseId: datum.id,
-      hasCircle: baseArray[mappedIndex],
-      set: mappedSet,
-      compoundId: datum.id+invertedResult[i+1]
-    })
-  }
-  console.log('NA',newArray);
-   return newArray
+    for (var i=0;i<baseArray.length;i++) {
+        //var mappedSet= invertedBaseMAPPING[i+1];
+        //var mappedIndex = result.dominoMapping[mappedSet]-1;
+        var mappedSet = invertedResult[i+1]; // nom du set
+        var mappedIndex =  i;
+        console.log('working CIRCLE FOR',mappedSet,mappedIndex);
+        newArray.push ({
+            baseId: datum.id,
+            hasCircle: baseArray[mappedIndex],
+            set: mappedSet,
+            compoundId: datum.id+invertedResult[i+1]
+        });
+    }
+    console.log('working',newArray);
+
+    return newArray
 }
 
 

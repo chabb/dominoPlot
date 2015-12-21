@@ -45,3 +45,19 @@ function main() {
     .datum([result])
     .call(chart.main);
 }
+
+
+//mice-human-rice = a b
+//mice-human = a b
+//mice-rice  = a b c
+// human-rice = zzzz a b
+// mice = d e
+// human = zzzw zzzp
+// rice = n nn nnn nnnn
+
+
+// only mice - rice  : a b c
+// mice : d de
+// rice : zzzz n nn nnn nnnn
+
+

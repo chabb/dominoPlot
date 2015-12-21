@@ -187,7 +187,14 @@ function dominoPlot(options) {
         circles.enter()
           .append("circle")
           .attr("cx",function(d,i){ return center})
-          .attr("cy",function(d,i){ return padding + yDomino(d.set )}) // quasi-bon il fuat la moitioe en fiat
+          .attr("cy",function(d,i){ console.log('circle',d);return padding + yDomino(d.set )}) // quasi-bon il fuat la moitioe en fiat
+          .attr("r", function(d)  { return r })
+          .attr("fill",function(d,i) {
+            return d.hasCircle ?  circleColor : "none";
+          });
+
+        circles.attr("cx",function(d,i){ return center})
+          .attr("cy",function(d,i){ console.log('circle update',d);return padding + yDomino(d.set )}) // quasi-bon il fuat la moitioe en fiat
           .attr("r", function(d)  { return r })
           .attr("fill",function(d,i) {
             return d.hasCircle ?  circleColor : "none";
@@ -232,12 +239,16 @@ function dominoPlot(options) {
 
 
         // update
+        bars.select('.barsContainer').attr("x", function(d,i) { return x(i); })
+
         bars.select('.bars')
             .attr("y", function(d,i) { return y(d.elements.length);  })
-            .attr("height", function(d) { return  barHeight - y(d.elements.length); });
+            .attr("height", function(d) { return  barHeight - y(d.elements.length); })
+            .attr("x", function(d,i) { return x(i); })
         bars.select('text').text(function(d) { return (d.elements.length); })
          .attr("y", function(d,i) { return  -20 + y(d.elements.length);})
-         .text(function(d) { return (d.elements.length); });
+         .text(function(d) { return (d.elements.length); })
+         .attr("x", function(d,i) { return x(i)+barWidth/2; })
 
         //exit
         bars.exit().select('.bars').transition().duration(1000).attr("y",y(0)).attr("height",0)
