@@ -107,7 +107,10 @@ function dominoPlot(options) {
             return data[0].stateTable[d].active;
         });
 
-        var yExtent = d3.extent( data[0].intersectionsArray,function(d) { return d.elements.length; })
+        var yExtent = d3.extent( data[0].intersectionsArray,function(d) {
+            if (!d) return 0;
+            return d.elements.length;
+        })
         yExtent = [0, yExtent[1]];
 
         var totalBarWidth = xDomain.length * barWidth;

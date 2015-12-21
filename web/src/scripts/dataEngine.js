@@ -57,7 +57,16 @@ d3.computeIntersections = function(maps,originalMapping)
 
     function turnOnSet(setName) {
         // we must find up the original and add it back to the datas
-        var indexOfSet = datas.originalMapping[setName] - 1;
+        //var indexOfSet = datas.originalMapping[setName] - 1;
+        // WE GOT TO CHECK IF SOME SETS WERE REMOVED AND UPDATE THE INDEX ACCORDINGLY !!!
+        var indexOfSet = 0;
+        $.each(datas.originalMapping,function(k,v) {
+            if (k == setName) return false;
+            if (table[k].active) indexOfSet++;
+        })
+        alert(indexOfSet);
+
+
         var addedSet = maps.get(setName);
         var numberOfSets = datas.numberOfSets;
         var intersections = datas.intersectionsArray;
@@ -66,6 +75,7 @@ d3.computeIntersections = function(maps,originalMapping)
         var spawnedIds = [];
         var newIntersections = [];
         console.log(setName,addedSet);
+        datas.numberOfSets = datas.numberOfSets+1; // we do it now or we could not compute the domino representation
         for (var i=0;i<intersections.length;i++) {
             var id = intersections[i].id;
             var newId = insertBit(id, indexOfSet, 1);
@@ -89,16 +99,15 @@ d3.computeIntersections = function(maps,originalMapping)
             };
             newIntersections[a.id]=a;
             newIntersections[b.id]=b;
-            console.log(a,b);
-
-
         }
 
         var map = {};
+        console.log('ADD',newIntersections);
         for (var i=0; i<newIntersections.length;i++) {
+            if (!newIntersections[i]) continue;
             map[newIntersections[i].id]=newIntersections[i];
         }
-        datas.numberOfSets++;
+
         datas.numberOfDominos = (newIntersections.length)
         datas.intersections = map
         datas.intersectionsArray = newIntersections;
@@ -115,7 +124,7 @@ d3.computeIntersections = function(maps,originalMapping)
                 delta--;
             }
         });
-        console.log('ADDED',newMapping,newInvertedMapping)
+
         datas.currentMapping = newMapping;
         datas.currentInvertedMapping = newInvertedMapping;
 
@@ -183,7 +192,7 @@ d3.computeIntersections = function(maps,originalMapping)
         for (var i=0; i<newIntersections.length;i++) {
             map[newIntersections[i].id]=newIntersections[i];
         }
-        datas.numberOfSets--;
+        datas.numberOfSets = datas.numberOfSets-1;
         datas.numberOfDominos = (newIntersections.length)
         datas.intersections = map;
 
@@ -287,7 +296,8 @@ d3.computeIntersections = function(maps,originalMapping)
     }
     function computeDominoRepresentation(setsId) {
         var domino = [];
-        //console.log('Trying to compute',setsId,numberOfSets);
+        console.log('Trying to compute',setsId,numberOfSets,datas);
+        if (datas) numberOfSets=datas.numberOfSets;
         for (var l=0;l<numberOfSets;l++) {
             id = (1 << l);
             var value =  id & setsId;
