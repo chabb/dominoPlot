@@ -57,7 +57,7 @@ d3.computeIntersections = function(maps,originalMapping)
 
     function turnOnSet(setName) {
         // we must find up the original and add it back to the datas
-        var indexOfSet = datas.currentMapping[setName] - 1;
+        var indexOfSet = datas.originalMapping[setName] - 1;
         var addedSet = maps.get(setName);
         var numberOfSets = datas.numberOfSets;
         var intersections = datas.intersectionsArray;
@@ -178,6 +178,7 @@ d3.computeIntersections = function(maps,originalMapping)
         // remove all useless intersections
 
         datas.intersectionsArray = newIntersections;
+
         var map = {};
         for (var i=0; i<newIntersections.length;i++) {
             map[newIntersections[i].id]=newIntersections[i];
