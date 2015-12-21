@@ -77,6 +77,22 @@ module.exports = function(grunt) {
     	}
 	};
 
+	grunt.loadNpmTasks('grunt-contrib-jasmine');
+	tasks.jasmine = {
+    	pivotal: {
+      		src: 'web/src/**/*.js',
+      		options: {
+        		specs: 'spec/*Spec.js',
+        		helpers: 'spec/*Helper.js',
+        		vendor: [
+          			"web/lib/*.js",
+          			 "http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"
+        		]
+      		}
+      	}
+    }
+
+
 
   	tasks.prettify.dev.html.files[ grunt.uriStatic+'index.html'] = [grunt.uriStatic+'index.html'];
   	console.log(tasks.watch.dev);

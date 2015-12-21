@@ -5,6 +5,7 @@ d3.computeIntersections = function(maps,originalMapping)
     numberOfSets = maps.keys().length;
 
     maps.forEach(function(k,v){
+        console.log('adding keys',k);
         dominoMapping[k] = _i++;
         for(var i=0;i<v.content.length;i++)
             list.push({set:k,element:v.content[i]});
@@ -59,14 +60,14 @@ d3.computeIntersections = function(maps,originalMapping)
         // we must find up the original and add it back to the datas
         //var indexOfSet = datas.originalMapping[setName] - 1;
         // WE GOT TO CHECK IF SOME SETS WERE REMOVED AND UPDATE THE INDEX ACCORDINGLY !!!
+        console.log('turning on',setName);
+        table[setName].active = true;
+
         var indexOfSet = 0;
         $.each(datas.originalMapping,function(k,v) {
             if (k == setName) return false;
             if (table[k].active) indexOfSet++;
         })
-        alert(indexOfSet);
-
-
         var addedSet = maps.get(setName);
         var numberOfSets = datas.numberOfSets;
         var intersections = datas.intersectionsArray;
@@ -135,6 +136,7 @@ d3.computeIntersections = function(maps,originalMapping)
     function turnOffSet(setName) {
         // we must fund up the original and ad it back to the datas
         // First step computes which intersection have to merge
+        table[setName].active = false;
         console.log(setName,datas);
         var indexOfSet = datas.currentMapping[setName] - 1;
         var numberOfSets = datas.numberOfSets;
