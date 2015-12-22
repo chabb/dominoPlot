@@ -137,19 +137,21 @@ d3.computeIntersections = function(maps,originalMapping)
         // we must fund up the original and ad it back to the datas
         // First step computes which intersection have to merge
         table[setName].active = false;
-        console.log(setName,datas);
         var indexOfSet = datas.currentMapping[setName] - 1;
         var numberOfSets = datas.numberOfSets;
         var intersections = datas.intersectionsArray;
-        console.log(intersections);
+        console.log('TURNING OFF',setName, 'ID', indexOfSet);
         var bitMask = 0;
+
+        // BITMASK IS ALL THE SET TO 1, EXCEPT THE TARGET SET TURN TO 0
         for (var i=0;i<numberOfSets;i++) {
             bitMask = bitMask +  ( i == indexOfSet ? 0 : Math.pow(2,i) )
         }
         var mergeMapping = []; // used for debugging purpose
         var originalIdToMergedId = [];     // index is the orignal Id, value is the destination Id
 
-        console.log(bitMask.toString(2));
+
+        console.log('BITMASK FOR REMOVED SET',bitMask.toString(2));
         for (var i=0;i<intersections.length;i++) {
             var originalId = intersections[i].id;
             var mergedId = intersections[i].id & bitMask;
@@ -163,17 +165,17 @@ d3.computeIntersections = function(maps,originalMapping)
         }
         // Second step merge intersections
         var numberOfIntersections = intersections.length;
-        console.log(originalIdToMergedId);
+        dump(mergeMapping,4);
         var newIntersections = [];
         for (var j=0;j<numberOfIntersections;j++) {
             console.log(j,numberOfIntersections);
             var interToMerge = intersections[j];
 
             if (originalIdToMergedId[j] >= 0 ) {
-                console.log("merge",j,"into",originalIdToMergedId[j]);
-                var targetIntersection = intersections[originalIdToMergedId[j]];
+                var targetIntersection = intersections[originalIdToMergedId[j]]; //ok
                 for (var k = 0;k< interToMerge.elements.length;k++) {
                 //
+                    console.log('adding',interToMerge.elements[k])
                     addElementToSet(targetIntersection.elements, interToMerge.elements[k])
                 }
                 newIntersections.push(targetIntersection);
@@ -181,7 +183,7 @@ d3.computeIntersections = function(maps,originalMapping)
                 targetIntersection.dominoRepresentation.splice(indexOfSet,1);
                 interToMerge.elements = null;
             // we remove the merged intersection
-                console.log('removing',j,targetIntersection)
+                console.log('removing intersection',j,targetIntersection)
             }
 
         }
