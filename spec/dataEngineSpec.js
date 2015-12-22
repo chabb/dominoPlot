@@ -31,7 +31,6 @@ describe("2 Sets, no element in common", function() {
         );
 
         result = d3.computeIntersections(contents);
-        console.log('testing',dump(result.turnOffSet,2));
     });
     function testCorrectInitialConfig() {
         expect(result.numberOfSets).toBe(2);
@@ -116,14 +115,12 @@ describe("2 Sets, some elements in common",function() {
     var abz = ["a","b","z","zz"];
     var abcde = ["a","b","c","d","e"];
     beforeEach(function(){
-
         var contents = d3.map(
             [
                 { name : "a", content:abz},
                 { name : "b", content:abcde}
             ],function(d) {return d.name;}
         );
-
         result = d3.computeIntersections(contents);
 
     });
@@ -166,8 +163,6 @@ describe("2 Sets, some elements in common",function() {
 
 // edge cases
 describe("2 Sets, all elements in common",function(){
-
-
 
 });
 
