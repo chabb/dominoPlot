@@ -112,7 +112,7 @@ describe("2 Sets, no element in common", function() {
 });
 
 
-xdescribe("2 Sets, some elements in common",function() {
+describe("2 Sets, some elements in common",function() {
     var abz = ["a","b","z","zz"];
     var abcde = ["a","b","c","d","e"];
     beforeEach(function(){
@@ -149,15 +149,23 @@ xdescribe("2 Sets, some elements in common",function() {
             expect(result.distinctElements).toBe(9); // WE KEEP ALL THE ELEMENTS IN THE (0)
         });
         it("should have correct intersections",function() {
-            dump(result,4);
             expect(result.intersectionsArray[0].elements).toEqual(['z','zz']); //disabled elements goes in id 0
             expect(result.intersectionsArray[1].elements).toEqual(['c', 'd', 'e', 'a', 'b']); // disabled element goes in id 1
+        });
+        describe("After turning off sets a",function() {
+            beforeEach(function(){
+                result.turnOnSet("a");
+            })
+            it("should be back to normal", function() {
+
+                testCorrectIntersections();
+            });
         });
     });
 });
 
 // edge cases
-xdescribe("2 Sets, all elements in common",function(){
+describe("2 Sets, all elements in common",function(){
 
 
 
