@@ -30,7 +30,9 @@ function dump(object, indent) {
 // i hope to get ride of the map
 
 
-describe("2 Sets, no element in common", function() {
+
+
+describe("3 Sets, som elements in common", function() {
     beforeEach(function(){
         var contents = d3.map(
             [
@@ -131,8 +133,84 @@ describe("2 Sets, no element in common", function() {
                 });
             });
 
-
         });
 
     });
 });
+
+describe("3 Sets, som elements in common", function() {
+    beforeEach(function(){
+        var contents = d3.map(
+            [
+                { name : "a", content:a1},
+                { name : "b", content:b2},
+                { name : "c", content:c3}
+
+
+            ],function(d) {return d.name;}
+        );
+        result = d3.computeIntersections(contents);
+    });
+    function testCorrectIntersections2() {
+        expect(result.intersections[0].elements.length).toBe(0);
+        expect(result.intersections[1].elements).toEqual(['a','1']);
+        expect(result.intersections[2].elements).toEqual(['b','2']);
+        expect(result.intersections[3].elements).toEqual([]);
+        expect(result.intersections[4].elements).toEqual(['c','3']);
+        expect(result.intersections[5].elements).toEqual([]);
+        expect(result.intersections[6].elements).toEqual([]);
+        expect(result.intersections[7].elements).toEqual([]);
+    }
+    function testWith2Dominos() {
+        expect(result.intersections[0].elements).toEqual(["a","1"]);
+        expect(result.intersections[1].elements).toEqual(["b","2"]);
+        expect(result.intersections[2].elements).toEqual(["c","3"]);
+        expect(result.intersections[3].elements).toEqual([]);
+    }
+
+    it ("should be correct",function() {
+        testCorrectIntersections2();
+    });
+    describe("After turning off sets a",function() {
+        beforeEach(function(){
+            result.turnOffSet("a");
+        });
+        it("should have the correct set",function(){
+            testWith2Dominos()
+        });
+        describe("After turning off sets b",function() {
+            beforeEach(function(){
+                result.turnOffSet("b");
+            });
+            it("should have the correct set",function(){
+                expect(result.intersections[0].elements).toEqual(["a","1","b","2"]);
+                expect(result.intersections[1].elements).toEqual(["c","3"]);
+            });
+            // turtle back to normal
+            describe("After turning on sets a",function() {
+                beforeEach(function(){
+                    result.turnOnSet("a"); // DEMONIC TRICK
+                });
+                it("should have the correct set",function(){
+                    expect(result.intersections[0].elements).toEqual(["b","2"]);
+                    expect(result.intersections[1].elements).toEqual(["a","1"]);
+                    expect(result.intersections[2].elements).toEqual(["c","3"]);
+                    expect(result.intersections[3].elements).toEqual([]);
+                });
+                xdescribe("After turning off sets b",function() {
+                    beforeEach(function(){
+                        result.turnOnSet("b");
+                    });
+                    it("should have the correct set",function(){
+                        testCorrectIntersections2();
+                    });
+                });
+            });
+        });
+    });
+
+});
+
+
+
+
