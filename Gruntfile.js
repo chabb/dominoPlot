@@ -2,7 +2,7 @@
 
 module.exports = function(grunt) {
 
-	var removeLogginhg = grunt.option('debug')
+	var removeLogging = !grunt.option('debug');
 	// URI paths for our tasks to use.
 	grunt.uri = './';
 	grunt.uriStatic = grunt.uri + 'web/';
@@ -96,37 +96,38 @@ module.exports = function(grunt) {
 
     // log stripper
     grunt.loadNpmTasks("grunt-remove-logging");
-    	removelogging: {
-        dist: {
-          src  : grunt.uriSrc+"/scripts/*.js",
-          dest : grunt.uriSrc+"/scripts/*-clean.js",
-
-          options: {
-            // see below for options. this is optional.
-          }
+    tasks.removelogging = {
+        test: {
+          	src  : grunt.uriSrc+"/scripts/*.js",
+          	dest : grunt.uriSrc+"/scripts/stripped/",
+          	expand : true,
+          	flatten : true,
+          	options: {
+             // set github repository if needed
+          	}
         }
-      }
-    });
+    };
 
-
-    // configure cleaning of files
+    // cleaning of file
     grunt.loadNpmTasks('grunt-contrib-clean');
-    tasks.clean: {
-  		build: ["path/to/dir/one", "path/to/dir/two"],
-  		release: ["path/to/another/dir/one", "path/to/another/dir/two"]
-	},
-
-
+    tasks.clean = {
+  		test: [grunt.uriSrc+"/scripts/stripped/"],
+	};
 
 
   	tasks.prettify.dev.html.files[ grunt.uriStatic+'index.html'] = [grunt.uriStatic+'index.html'];
-  	console.log(tasks.watch.dev);
 	// Register The Tasks
 	grunt.registerTask('lint', ['csslint', 'htmllint', 'jshint']);
 	grunt.registerTask('minify', ['cssmin', 'htmlmin', 'uglify']);
 	grunt.registerTask('default', ['lint', 'concat', 'minify']);
 	grunt.registerTask('start-server',['connect']);
 	grunt.registerTask('start-dev',['htmlbuild:dev','prettify:dev','start-server','watch:dev']);
+
+	if (removeLogging) {
+		grunt.registerTask('unit',['removelogging:test','jasmine','clean:test']);
+	} else {
+		grunt.registerTask('unit',['jasmine']);
+	}
 
 	grunt.event.on('watch', function(action, filepath, target) {
 		grunt.log.writeln(target + ': ' + filepath + ' has ' + action);
