@@ -2,7 +2,7 @@
 
 module.exports = function(grunt) {
 
-	var removeLogging = !grunt.option('debug');
+	var removeLogging = !grunt.option('debugTest');
 	// URI paths for our tasks to use.
 	grunt.uri = './';
 	grunt.uriStatic = grunt.uri + 'web/';
@@ -80,11 +80,12 @@ module.exports = function(grunt) {
 	};
 
 	grunt.loadNpmTasks('grunt-contrib-jasmine');
+	var field = removeLogging ? 'stripped/' : '';
 	tasks.jasmine = {
     	pivotal: {
-      		src: 'web/src/**/*.js',
+      		src: 'web/src/scripts/'+field+'*.js',
       		options: {
-        		specs: 'spec/*3Spec.js',
+        		specs: 'spec/*Spec.js',
         		helpers: 'spec/*Helper.js',
         		vendor: [
           			"web/lib/*.js",

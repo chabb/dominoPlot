@@ -207,8 +207,8 @@ function dominoPlot(options) {
 
 
         // render bars 'axis' TODO move elsewhere when ok and fix the chart variable
-        var _chart = svg.select(".chart")
-        console.log(data[0].intersectionsArray)
+        var _chart = svg.select(".chart");
+        console.log(data[0].intersectionsArray);
         var bars = _chart.selectAll(".barsGroup")
             .data(data[0].intersectionsArray,function(d){ console.log('data key',d.id); return d.id})
 

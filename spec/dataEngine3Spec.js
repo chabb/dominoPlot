@@ -32,7 +32,7 @@ function dump(object, indent) {
 
 
 
-describe("3 Sets, som elements in common", function() {
+describe("3 Sets, some elements in common", function() {
     beforeEach(function(){
         var contents = d3.map(
             [

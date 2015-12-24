@@ -1,8 +1,8 @@
 d3.computeIntersections = function(maps,originalMapping)
 {
   //http://stackoverflow.com/questions/26028124/the-intersection-of-all-combinations-of-n-sets
-  var list = [], dominoMapping = {}, _i = 1, intersections = {}, elements = 0,
-    numberOfSets = maps.keys().length;
+    var list = [], dominoMapping = {}, _i = 1, intersections = {}, elements = 0,
+        numberOfSets = maps.keys().length;
 
     maps.forEach(function(k,v){
         console.log('adding keys',k);
@@ -165,7 +165,7 @@ d3.computeIntersections = function(maps,originalMapping)
         }
         // Second step merge intersections
         var numberOfIntersections = intersections.length;
-        dump(mergeMapping,4);
+        //dump(mergeMapping,4);
         var newIntersections = [];
         for (var j=0;j<numberOfIntersections;j++) {
             console.log(j,numberOfIntersections);
@@ -175,7 +175,7 @@ d3.computeIntersections = function(maps,originalMapping)
                 var targetIntersection = intersections[originalIdToMergedId[j]]; //ok
                 for (var k = 0;k< interToMerge.elements.length;k++) {
                 //
-                    console.log('adding',interToMerge.elements[k])
+                    console.log('adding',interToMerge.elements[k]);
                     addElementToSet(targetIntersection.elements, interToMerge.elements[k])
                 }
                 newIntersections.push(targetIntersection);
@@ -183,7 +183,7 @@ d3.computeIntersections = function(maps,originalMapping)
                 targetIntersection.dominoRepresentation.splice(indexOfSet,1);
                 interToMerge.elements = null;
             // we remove the merged intersection
-                console.log('removing intersection',j,targetIntersection)
+                console.log('removing intersection',j,targetIntersection);
             }
 
         }
@@ -347,7 +347,7 @@ function reprojectArray(datum, context) {
     }
     console.log('working',newArray);
 
-    return newArray
-}
+    return newArray;
+};
 
 
