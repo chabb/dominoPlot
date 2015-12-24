@@ -1,6 +1,8 @@
 /*global module, require*/
 
 module.exports = function(grunt) {
+
+	var removeLogginhg = grunt.option('debug')
 	// URI paths for our tasks to use.
 	grunt.uri = './';
 	grunt.uriStatic = grunt.uri + 'web/';
@@ -91,6 +93,29 @@ module.exports = function(grunt) {
       		}
       	}
     }
+
+    // log stripper
+    grunt.loadNpmTasks("grunt-remove-logging");
+    	removelogging: {
+        dist: {
+          src  : grunt.uriSrc+"/scripts/*.js",
+          dest : grunt.uriSrc+"/scripts/*-clean.js",
+
+          options: {
+            // see below for options. this is optional.
+          }
+        }
+      }
+    });
+
+
+    // configure cleaning of files
+    grunt.loadNpmTasks('grunt-contrib-clean');
+    tasks.clean: {
+  		build: ["path/to/dir/one", "path/to/dir/two"],
+  		release: ["path/to/another/dir/one", "path/to/another/dir/two"]
+	},
+
 
 
 
