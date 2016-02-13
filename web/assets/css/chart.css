@@ -1,29 +1,64 @@
+
 dominos {
   stroke:black;
 }
 text {
   font: 10px Helvetica;
+  fill: #b9c0d0;
+  pointer-events: none;
 }
-#main {
-    border: 1px #EEEEFF solid; /* prevent margin collapsing */
 
-}
 .axis line,
 .axis path {
   fill: none;
-  stroke: #000;
+  stroke: #e6e8ee;
   shape-rendering: crispEdges;
 }
+
 circle {
     /*fill : none;  CSS selectors have precedence over SVG styling*/
-    stroke: #555555;
+    stroke: #b9c0d0;
     stroke-width: 2px;
 }
+
 .barsContainer {
-    fill: #ddddee;
+   transition: all 0.5s ease-out;
+    fill: #f0f2f8;
+    cursor: pointer;
 
 }
+
+.barsContainer:hover + text + rect, .bars:hover {
+    transition: all 0.1s ease-in;
+    fill: #589af1;
+     transform-origin: center center;
+    transform: scale(1.20, 1);
+
+}
+.barsContainer:hover + text {
+   fill: #589af1;
+   font: 15px Helvetica;
+   transition: all 0.1s ease-in;
+}
+
+text + .bars:hover {
+   fill: #589af1;
+   font: 15px Helvetica;
+   transition: all 0.1s ease-in;
+}
+
+.barsContainer:hover {
+   transition: all 0.1s ease-in;
+   fill: #e6e8ee;
+}
+
+
 .bars {
-    fill: #333322;
+    fill: #b9c0d0;
+    transform-origin: center center;
+    transition: all 0.5s ease-out;
     shape-rendering: crispEdges;
+    transform: scale(1, 1);
+    pointer-events: none;
+
 }

@@ -3,6 +3,9 @@
 module.exports = function(grunt, tasks) {
   // Load our node module required for this task.
   grunt.loadNpmTasks('grunt-html-build');
+
+  var field = grunt.removeLogging ? '/stripped/' : '';
+  console.log('FIELD',field);
   tasks.htmlbuild = {
     dev: {
       src: '<%= grunt.uriSrc %>/index.tpl.html',
@@ -13,7 +16,7 @@ module.exports = function(grunt, tasks) {
         relative: true,
         scripts: {
           bundle: [
-          '<%= grunt.uriSrc %>/scripts/*.js',
+          '<%= grunt.uriSrc %>/scripts'+field+'/*.js',
           '!**/main.js',
           ],
           libs: [

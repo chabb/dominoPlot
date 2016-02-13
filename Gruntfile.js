@@ -2,8 +2,10 @@
 
 module.exports = function(grunt) {
 
-	var removeLogging = !grunt.option('debugTest');
-	// URI paths for our tasks to use.
+	grunt.removeLogging = !grunt.option('debugTest');
+	console.log('remove logging',grunt.removeLogging);
+	//  paths for our tasks to use.
+	var removeLogging = grunt.removeLogging;
 	grunt.uri = './';
 	grunt.uriStatic = grunt.uri + 'web/';
 	grunt.uriDist = grunt.uriStatic + 'dist/';
@@ -85,7 +87,7 @@ module.exports = function(grunt) {
     	pivotal: {
       		src: 'web/src/scripts/'+field+'*.js',
       		options: {
-        		specs: 'spec/*Spec.js',
+        		specs: 'spec/*eSpec.js',
         		helpers: 'spec/*Helper.js',
         		vendor: [
           			"web/lib/*.js",
@@ -121,7 +123,7 @@ module.exports = function(grunt) {
 	grunt.registerTask('lint', ['csslint', 'htmllint', 'jshint']);
 	grunt.registerTask('minify', ['cssmin', 'htmlmin', 'uglify']);
 	grunt.registerTask('default', ['lint', 'concat', 'minify']);
-	grunt.registerTask('start-server',['connect']);
+	grunt.registerTask('start-server',['connect','watch:dev']);
 	grunt.registerTask('start-dev',['htmlbuild:dev','prettify:dev','start-server','watch:dev']);
 
 	if (removeLogging) {

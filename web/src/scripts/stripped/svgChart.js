@@ -20,19 +20,24 @@ function dominoPlot(options) {
     // this function renders the top list of active/inactive sets
     var renderSetsMenu = function(selection) {
         selection.each(function(data) {
-            console.log('DATA FOR TOP BAR',data);
+
             var svg = d3.select(this);
+
+            svg.append("div")
+                .classed("listTitle",true)
+                .append("a").text("Title");
+
             var list = svg.append('ul')
                 .attr('id','navlist');
-            list.append("li")
+            /*list.append("li")
                 .classed("listTitle",true)
-                .append("a").text("TITLE")
+                .append("a").text("Title")*/
             list.selectAll('li.listItem')
                 .data(d3.keys(data.currentMapping))
                 .enter()
                 .append("li")
                 .classed("listItem",true)
-                .append("a").text(function(d,i){ return d; })
+                .append("a").text(function(d,i){ return " "+d; })
                 .classed("active",function(d) { return data.stateTable[d].active})
                 .on("click",function(d,i) {
                     var newState = !data.stateTable[d].active;
@@ -47,7 +52,7 @@ function dominoPlot(options) {
                     d3.select(this)
                         .classed("active",function(d) { return data.stateTable[d].active})
                         .classed("inactive",function(d) { return !data.stateTable[d].active})
-                    console.log("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+
                     renderAxises([data]);
 
                 })
@@ -57,7 +62,7 @@ function dominoPlot(options) {
 
     // this fonction init the groups and the basic element
     var svgInit = function(selection) {
-        console.log('Defining groups',selection);
+
         selection.each(function(data) {
 
             var svg = d3.select(this);
@@ -134,7 +139,7 @@ function dominoPlot(options) {
         var yDomino = d3.scale.ordinal()
             .rangeRoundBands([0, barWidth * setsName.length], .0,0)
             .domain(setsName); // a bit dirty coz you access the main data
-        console.log(x.rangeBand(),'rg',setsName);
+
 
 
         // y scale for bars
@@ -165,7 +170,7 @@ function dominoPlot(options) {
         svg.select('.yaxis.domino.axis').transition().duration(400).call(yAxisDomino);
 
         //  append group for x domino axis
-        console.log(chart,options);
+
         var  dominoElements = svg.select('g.domino-axis')
             .selectAll("g.dominos")
             .data(data[0].intersectionsArray,function(d){ return d.id})
@@ -176,11 +181,11 @@ function dominoPlot(options) {
         var dominosChart = {};
         var dominos = enter.append("g")
           .attr("class", "dominos")
-          .attr("transform", function(d,i){ console.log('data',d); return "translate("+(x(i))+",0)" });
+          .attr("transform", function(d,i){  return "translate("+(x(i))+",0)" });
 
         dominoElements.exit().transition().duration(1000).style('opacity',0).remove();
 
-        dominoElements.attr("transform", function(d,i){ console.log('data',d); return "translate("+(x(i))+",0)" });
+        dominoElements.attr("transform", function(d,i){  return "translate("+(x(i))+",0)" });
 
 
 
@@ -189,14 +194,14 @@ function dominoPlot(options) {
         circles.enter()
           .append("circle")
           .attr("cx",function(d,i){ return center})
-          .attr("cy",function(d,i){ console.log('circle',d);return padding + yDomino(d.set )}) // quasi-bon il fuat la moitioe en fiat
+          .attr("cy",function(d,i){ return padding + yDomino(d.set )}) // quasi-bon il fuat la moitioe en fiat
           .attr("r", function(d)  { return r })
           .attr("fill",function(d,i) {
             return d.hasCircle ?  circleColor : "none";
           });
 
         circles.attr("cx",function(d,i){ return center})
-          .attr("cy",function(d,i){ console.log('circle update',d);return padding + yDomino(d.set )}) // quasi-bon il fuat la moitioe en fiat
+          .attr("cy",function(d,i){ return padding + yDomino(d.set )}) // quasi-bon il fuat la moitioe en fiat
           .attr("r", function(d)  { return r })
           .attr("fill",function(d,i) {
             return d.hasCircle ?  circleColor : "none";
@@ -207,9 +212,9 @@ function dominoPlot(options) {
 
         // render bars 'axis' TODO move elsewhere when ok and fix the chart variable
         var _chart = svg.select(".chart");
-        console.log(data[0].intersectionsArray);
+
         var bars = _chart.selectAll(".barsGroup")
-            .data(data[0].intersectionsArray,function(d){ console.log('data key',d.id); return d.id})
+            .data(data[0].intersectionsArray,function(d){  return d.id})
 
         // lots of visual artifacts, try to understand what happend
 
@@ -307,7 +312,7 @@ function dominoPlot(options) {
     }
 
     chart.main = function(selection) {
-        console.log('start',selection.data());
+
         selection.style(
             {
                 'width'  : chart.width(),

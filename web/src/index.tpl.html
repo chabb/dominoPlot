@@ -1,5 +1,9 @@
 <html>
 <head>
+
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,300,600,700' rel='stylesheet'
+       type='text/css' />
+
     <title>grunt-html-build - Test Page</title>
     <!-- build:style bundle -->
     <!-- /build -->
@@ -12,15 +16,49 @@
 </head>
 <body id="landing-page">
   <div class="header">
-    <h1>HEADER</h1>
-    TBD
+    <div class="inner-col">
+       <div class="logo">
+          <img src="assets/img/logo.png" alt="Smiley face">
+          <div class="logo-text">
+            <span class="title bold">DOMINO</span><span class="title">PLOT</span>
+          </div>
+        </div>
+       <ul class="navigation bold">
+          <li>About</li>
+          <li>Contact</li>
+          <li>Privacy</li>
+       </ul>
+    </div>
   </div>
-  <h1>MAIN TEST</h1>
-  <div id="main"></div>
+
+  <div class="content">
+       <div class="inner-col">
+          <div class="config-btn">Configure</div>
+          <div class="chart-buttons">
+            <div class="sort-btn">Sort</div>
+            <div class="filter-btn">Filter</div>
+          </div>
+          <div id="main">
+          <!-- CHART HERE -->
+          </div>
+       </div>
+  </div>
 
   <div class="footer">
-    <h1>FOOTER</h1>
-    TB
+    <div class="inner-col">
+         <div class="logo">
+            <img src="assets/img/logo.png" alt="Smiley face">
+            <div class="logo-text">
+              <span class="title bold">DOMINO</span><span class="title">PLOT</span>
+            </div>
+          </div>
+         <div class="copyright">2016 - Domino System Inc. - All Rights Reserved</div>
+         <ul class="navigation">
+            <li>Twitter</li>
+            <li>FB</li>
+            <li>In</li>
+         </ul>
+      </div>
   </div>
 
   <!-- build:process -->

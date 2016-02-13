@@ -5,7 +5,7 @@ d3.computeIntersections = function(maps,originalMapping)
         numberOfSets = maps.keys().length;
 
     maps.forEach(function(k,v){
-        console.log('adding keys',k);
+        
         dominoMapping[k] = _i++;
         for(var i=0;i<v.content.length;i++)
             list.push({set:k,element:v.content[i]});
@@ -59,7 +59,7 @@ d3.computeIntersections = function(maps,originalMapping)
         // we must find up the original and add it back to the datas
         //var indexOfSet = datas.originalMapping[setName] - 1;
         // WE GOT TO CHECK IF SOME SETS WERE REMOVED AND UPDATE THE INDEX ACCORDINGLY !!!
-        console.log('turning on',setName);
+        
         table[setName].active = true;
 
         var indexOfSet = 0;
@@ -74,7 +74,7 @@ d3.computeIntersections = function(maps,originalMapping)
         // First, we compute the id of the new intersections
         var spawnedIds = [];
         var newIntersections = [];
-        console.log(setName,addedSet);
+        
         datas.numberOfSets = datas.numberOfSets+1; // we do it now or we could not compute the domino representation
         for (var i=0;i<intersections.length;i++) {
             var id = intersections[i].id;
@@ -102,7 +102,7 @@ d3.computeIntersections = function(maps,originalMapping)
         }
 
         var map = {};
-        console.log('ADD',newIntersections);
+        
         for (var i=0; i<newIntersections.length;i++) {
             if (!newIntersections[i]) continue;
             map[newIntersections[i].id]=newIntersections[i];
@@ -139,7 +139,7 @@ d3.computeIntersections = function(maps,originalMapping)
         var indexOfSet = datas.currentMapping[setName] - 1;
         var numberOfSets = datas.numberOfSets;
         var intersections = datas.intersectionsArray;
-        console.log('TURNING OFF',setName, 'ID', indexOfSet);
+        
         var bitMask = 0;
 
         // BITMASK IS ALL THE SET TO 1, EXCEPT THE TARGET SET TURN TO 0
@@ -150,7 +150,7 @@ d3.computeIntersections = function(maps,originalMapping)
         var originalIdToMergedId = [];     // index is the orignal Id, value is the destination Id
 
 
-        console.log('BITMASK FOR REMOVED SET',bitMask.toString(2));
+        
         for (var i=0;i<intersections.length;i++) {
             var originalId = intersections[i].id;
             var mergedId = intersections[i].id & bitMask;
@@ -167,14 +167,14 @@ d3.computeIntersections = function(maps,originalMapping)
         //dump(mergeMapping,4);
         var newIntersections = [];
         for (var j=0;j<numberOfIntersections;j++) {
-            console.log(j,numberOfIntersections);
+            
             var interToMerge = intersections[j];
 
             if (originalIdToMergedId[j] >= 0 ) {
                 var targetIntersection = intersections[originalIdToMergedId[j]]; //ok
                 for (var k = 0;k< interToMerge.elements.length;k++) {
 
-                    console.log('adding',interToMerge.elements[k]);
+                    
                     addElementToSet(targetIntersection.elements, interToMerge.elements[k])
                 }
                 //mergeSet(targetIntersection,interToMerge);
@@ -183,7 +183,7 @@ d3.computeIntersections = function(maps,originalMapping)
                 targetIntersection.dominoRepresentation.splice(indexOfSet,1);
                 interToMerge.elements = null;
             // we remove the merged intersection
-                console.log('removing intersection',j,targetIntersection);
+                
             }
 
         }
@@ -230,7 +230,7 @@ d3.computeIntersections = function(maps,originalMapping)
 
     // set is currently just an array, but we plan to have some kind of representation
     function addElementToSet(set, element) {
-        console.log(set);
+        
         if (set.indexOf(element) == -1) { set.push(element); }
     }
 
@@ -241,7 +241,7 @@ d3.computeIntersections = function(maps,originalMapping)
         //setB = set of the old intersection
         var elA = setB;
         var elB = setA;
-        console.log(elA,elB);
+        
         var histogram = {};
         var returnObject = {
             elementInCommon:[],
@@ -309,7 +309,7 @@ d3.computeIntersections = function(maps,originalMapping)
     }
     function computeDominoRepresentation(setsId) {
         var domino = [];
-        console.log('Trying to compute',setsId,numberOfSets,datas);
+        
         if (datas) numberOfSets=datas.numberOfSets;
         for (var l=0;l<numberOfSets;l++) {
             id = (1 << l);
@@ -338,7 +338,7 @@ function reprojectArray(datum, context) {
     var newArray = [];
     var baseMAPPING = context.currentMapping; // name -> index of set
     var invertedResult = context.currentInvertedMapping;
-    console.log('working on',datum,invertedResult,context);
+    
 
 
     for (var i=0;i<baseArray.length;i++) {
@@ -346,7 +346,7 @@ function reprojectArray(datum, context) {
         //var mappedIndex = result.dominoMapping[mappedSet]-1;
         var mappedSet = invertedResult[i+1]; // nom du set
         var mappedIndex =  i;
-        console.log('working CIRCLE FOR',mappedSet,mappedIndex);
+        
         newArray.push ({
             baseId: datum.id,
             hasCircle: baseArray[mappedIndex],
@@ -354,7 +354,7 @@ function reprojectArray(datum, context) {
             compoundId: datum.id+invertedResult[i+1]
         });
     }
-    console.log('working',newArray);
+    
 
     return newArray;
 };

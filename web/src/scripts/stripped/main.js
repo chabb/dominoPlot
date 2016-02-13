@@ -58,9 +58,9 @@ function main() {
 function randomSetGenerator(length) {
     var array = {}
     for (var i=0;i<length;i++) {
-        var randomstring = Math.random().toString(36).slice(2,4);
+        var randomstring = Math.random().toString(36).slice(2,5);
         array[randomstring]= randomstring;
-        console.log(randomstring);
+
     }
     return Object.keys(array);
 
