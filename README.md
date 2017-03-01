@@ -28,6 +28,6 @@ This will start a browser and recompiles the files each time you modify the sour
 
 ## Authors
 
-This was made at the end of the year 2015
+Some blurbs
 
 
